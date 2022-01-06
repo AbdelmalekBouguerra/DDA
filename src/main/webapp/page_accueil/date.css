@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Courgette|Roboto');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#scroller::-webkit-scrollbar {
+    display: none;
+}
+
+#scroller {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+body,
+html {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    width: 100vw;
+    scrollbar-width: none;
+    overflow: hidden;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+section h1 {
+    font-size: calc(18px + 2vw);
+    position: relative;
+    top: 22%;
+    color: white;
+    align-items: center;
+}
+section h3 {
+    font-size: calc(12px + 2vw);
+    position: relative;
+    top: 22%;
+    color: white;
+    align-items: center;
+}
+
+.datepicker {
+    position: relative;
+    top: 30%;
+}
+
+.datepicker button {
+    position: absolute;
+    cursor: pointer;
+    align-items: center;
+    left: 44.5%;
+    top: 215%;
+    margin: 22px;
+    letter-spacing: 1px;
+    overflow: hidden;
+    border: 2px solid;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    width: 130px;
+    height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    transition: 0.5s;
+    border-radius: 8px;
+    background: transparent;
+}
+
+.datepicker button:hover {
+    box-shadow: 3px 5px 10px 4px rgba(4, 241, 4, 0.3);
+    cursor: pointer;
+    background-color: rgb(76, 205, 50);
+    color: white;
+}
+
+@media (max-width:1277px) {
+    .datepicker button {
+        position: absolute;
+        left: 43%
+    }
+}
+
+@media (max-width:480px) {
+    .datepicker button {
+        position: absolute;
+        left: 29%;
+        box-shadow: 3px 5px 10px 4px rgba(4, 241, 4, 0.3);
+        background-color: rgb(76, 205, 50);
+        color: rgb(255, 255, 255);
+    }
+    /* .datepicker button:hover {
+        display: none;
+    } */
+}
+
+section#home-row {
+    background: url("p2.jpg") no-repeat center center/cover;
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    height: 60%;
+}
+
+nav {
+    list-style: none;
+    background: black;
+    width: 100vw;
+    overflow: hidden;
+    right: 30px;
+    top: 20px;
+    z-index: 1;
+}
+
+.navlogo {
+    height: 42px;
+    float: left;
+    margin: 16px 30px;
+    cursor: pointer;
+}
+
+.icons-size {
+    color: #333;
+    font-size: 14px;
+}
+
+nav .profile {
+    cursor: pointer;
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    width: 55px;
+    float: right;
+    margin: 16px 20px;
+}
+
+nav .profile img {
+    width: 100%;
+    top: 0;
+    position: absolute;
+    object-fit: cover;
+    left: 0;
+    height: 100%;
+}
+
+nav .profile img:hover {
+    opacity: 0.5;
+}
+
+nav .menu {
+    background-color: #FFF;
+    box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    padding: 10px 20px;
+    position: absolute;
+    right: -10px;
+    width: 200px;
+    transition: 0.5s;
+    top: 120px;
+    visibility: hidden;
+    opacity: 0;
+    margin: 25px;
+    z-index: 999;
+}
+
+nav .menu.active {
+    opacity: 1;
+    top: 80px;
+    visibility: visible;
+}
+
+nav .menu::before {
+    background-color: #fff;
+    content: '';
+    height: 20px;
+    position: absolute;
+    right: 20px;
+    transform: rotate(45deg);
+    top: -5px;
+    width: 20px;
+}
+
+nav .menu h3 {
+    color: #555;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3em;
+    padding: 20px 0px;
+    text-align: left;
+    width: 100%;
+}
+
+nav .menu h3 div {
+    color: #818181;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+nav .menu ul li {
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: left;
+    list-style: none;
+    padding: 10px 0px;
+}
+
+nav .menu ul li img {
+    max-width: 20px;
+    margin-right: 10px;
+    opacity: 0.5;
+    transition: 0.5s
+}
+
+nav .menu ul li a {
+    display: inline-block;
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+    padding-left: 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: 0.5s;
+}
+
+nav .menu ul li:hover img {
+    opacity: 1;
+}
+
+nav .menu ul li:hover a {
+    color: #F26526;
+}
+
+@media (max-width:480px) {
+    nav .menu {
+        background-color: rgb(192, 192, 192);
+    }
+    nav .menu::before {
+        background-color: rgb(192, 192, 192);
+    }
+    nav .menu ul li a {
+        color: rgb(255, 255, 255);
+    }
+}
+
+.lead {
+    font-size: 1.5rem;
+}
