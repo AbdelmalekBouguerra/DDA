@@ -32,7 +32,7 @@
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.11.4" level="project" />
     <orderEntry type="library" name="Maven: javax.xml.registry:javax.xml.registry-api:1.0.8" level="project" />
     <orderEntry type="library" name="Maven: com.github.albfernandez:javadbf:1.13.2" level="project" />
-    <orderEntry type="library" name="Maven: e-iceblue:spire.pdf:3.11.6" level="project" />
+    <orderEntry type="library" name="Maven: e-iceblue:spire.office.free:3.9.0" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.11.0" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.6.2" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />

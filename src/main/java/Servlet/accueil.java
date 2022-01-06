@@ -37,7 +37,7 @@ public class accueil extends HttpServlet {
 
         String month,year;
         if (DATE.GetMonthNum().equals("01")){
-            month = DATE.GetMonthNum();
+            month = "12";
             year = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
         } else {
             month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);

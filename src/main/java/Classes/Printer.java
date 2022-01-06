@@ -246,7 +246,7 @@ public class Printer {
 
         String month,lastyear;
         if (DATE.GetMonthNum().equals("01")){
-            month = DATE.GetMonthNum();
+            month = "12";
             lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
         } else {
             month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
@@ -360,6 +360,20 @@ public class Printer {
             String[][] data =sortingRub(rubdao.getRUB(MAT, month, year));
             String[][] total = rubdao.CalBP(data);
             Map<String, String> infoList = persdao.getPERS(MAT,year,month);
+
+            // checking if pers of this month exist
+            if (null == infoList.get("nom")){
+                String lastmonth,lastyear;
+                if (DATE.GetMonthNum().equals("01")){
+                    lastmonth = "12";
+                    lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+                } else {
+                    lastmonth = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+                    lastyear =  DATE.GetYear();
+                }
+
+                infoList = persdao.getPERS(MAT,lastyear,lastmonth);
+            }
 
             // creation qr code.
             String QR_Code = "QR" + MAT + "_" + year + "_" + month + ".png";
@@ -504,7 +518,7 @@ public class Printer {
             // fetch data form DB
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
-                month = DATE.GetMonthNum();
+                month = "12";
                 lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
             } else {
                 month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
@@ -597,7 +611,7 @@ public class Printer {
             // fetch data form DB
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
-                month = DATE.GetMonthNum();
+                month = "12";
                 lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
             } else {
                 month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
@@ -701,7 +715,7 @@ public class Printer {
             // fetch data form DB
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
-                month = DATE.GetMonthNum();
+                month = "12";
                 lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
             } else {
                 month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);

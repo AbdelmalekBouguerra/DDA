@@ -40,7 +40,7 @@ public class Login extends HttpServlet {
                 request.setAttribute("invalidPass", "cord incorrect");
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
-        } else {
+       } else {
             uname = "value=\"" + uname + '"';
             pass = "value=\"" + pass + '"';
             request.setAttribute("uname", uname);

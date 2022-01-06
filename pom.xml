@@ -37,11 +37,11 @@
             <artifactId>javadbf</artifactId>
             <version>1.13.2</version>
         </dependency>
-            <dependency>
-                <groupId> e-iceblue </groupId>
-                <artifactId>spire.pdf</artifactId>
-                <version>3.11.6</version>
-            </dependency>
+        <dependency>
+            <groupId>e-iceblue</groupId>
+            <artifactId>spire.office.free</artifactId>
+            <version>3.9.0</version>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
