@@ -26,10 +26,12 @@ public class RE {
         try {
             // Récupération des données
             String date = month+"/"+year;
-            String query = "SELECT * FROM rub_" + year + " WHERE matricule = ? AND dateexpl = '"+date+"'";
+            String query = "SELECT * FROM rub_" + year + " WHERE matricule = ? AND mois = ? AND annee = ? ;";
             Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement pStatement = connection.prepareStatement(query);
             pStatement.setString(1, Matricule);
+            pStatement.setString(2, month);
+            pStatement.setString(3, year);
             ResultSet resultSet = pStatement.executeQuery();
             // reading from DB.
             int i = 0;
@@ -100,7 +102,6 @@ public class RE {
 
     // Calculer RE à l'aide des dernières fonctions
     public static double[] getRE(String MAT, String year,String month) {
-//        String month = String.valueOf(Integer.parseInt(DATE.GetMonthNum()) - 1);
         String[][] data = RE.getRUB(MAT,month, year);
         for (String[] datum : data) {
             if (datum != null) {
@@ -114,6 +115,7 @@ public class RE {
 
 
         double SalaireBase,
+                SalaireUnique = 0,
                 PrimePanier = 0,
                 PrimeTransport = 0,
                 IndNuisance = 0,
@@ -157,6 +159,11 @@ public class RE {
 
         int j = 0;
         while (data[j] != null) {
+            // Prime de transport
+            if (data[j][0].equals("136")) PrimeTransport = (Double.parseDouble(data[j][1]));
+            // Salaire Unique
+            if (data[j][0].equals("200")) SalaireUnique = (Double.parseDouble(data[j][1]));
+
             // calculate prime panier and ind.Nourriture
             if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
@@ -198,6 +205,7 @@ public class RE {
         GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
                 + PrimeTransport + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
                 + IZCV + IAG;
+        GainsNonImpo = SalaireUnique;
         RetenuesNonImposable = AssuranceSociale + Retraite + RetAssuanceChomage + RetraiteAnticipee + PCR_MIP;
 
         IRGRapB = IndemniteInterim + IZIN + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN
@@ -224,6 +232,7 @@ public class RE {
         System.out.println("IndNourriture : " + IndNourriture);
         System.out.println("AssuranceSocialeB : " + AssuranceSocialeB);
         System.out.println("AssuranceSociale : " + AssuranceSociale);
+        System.out.println("SalaireUnique : " + SalaireUnique);
         System.out.println("IAG : " + IAG);
         System.out.println("Retraite : " + Retraite);
         System.out.println("RetAssuanceChomage  : " + RetAssuanceChomage);
