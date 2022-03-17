@@ -19,5 +19,4 @@ public static String url = "jdbc:mysql://172.21.99.45:3306/" + dbName;
 //    public static String password = "";
     public static String password = "dgp_password";
 
-
 }

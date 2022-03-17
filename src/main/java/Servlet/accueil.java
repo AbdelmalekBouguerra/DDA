@@ -3,10 +3,7 @@ package Servlet;
 
 import Classes.DATE;
 import Classes.Printer;
-import DAO.HISDAO;
-import DAO.PERSDAO;
-import DAO.STATDAO;
-import DAO.USERDAO;
+import DAO.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,9 +36,9 @@ public class accueil extends HttpServlet {
         String month,year;
         if (DATE.GetMonthNum().equals("01")){
             month = "12";
-            year = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+            year = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
         } else {
-            month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
             year =  DATE.GetYear();
         }
 

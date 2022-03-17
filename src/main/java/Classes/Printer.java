@@ -244,12 +244,13 @@ public class Printer {
         String year = DATE.GetYear();
         String day = DATE.GetDayNum();
 
+
         String month,lastyear;
         if (DATE.GetMonthNum().equals("01")){
             month = "12";
-            lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+            lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
         } else {
-            month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
             lastyear =  DATE.GetYear();
         }
 
@@ -363,12 +364,13 @@ public class Printer {
 
             // checking if pers of this month exist
             if (null == infoList.get("nom")){
+
                 String lastmonth,lastyear;
                 if (DATE.GetMonthNum().equals("01")){
                     lastmonth = "12";
-                    lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+                    lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
                 } else {
-                    lastmonth = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+                    lastmonth = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
                     lastyear =  DATE.GetYear();
                 }
 
@@ -516,12 +518,14 @@ public class Printer {
             doc.loadFromFile("C:\\template\\ReleveDesEmoluments.docx");
 
             // fetch data form DB
+
+
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
                 month = "12";
-                lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
             } else {
-                month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
                 lastyear =  DATE.GetYear();
             }
             Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
@@ -612,9 +616,9 @@ public class Printer {
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
                 month = "12";
-                lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
             } else {
-                month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));;
                 lastyear =  DATE.GetYear();
             }
             Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
@@ -716,9 +720,9 @@ public class Printer {
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){
                 month = "12";
-                lastyear = String.valueOf(Integer.parseInt(DATE.GetYear())-1);
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
             } else {
-                month = String.valueOf(Integer.parseInt(DATE.GetMonthNum())-1);
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));;
                 lastyear =  DATE.GetYear();
             }
             Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
