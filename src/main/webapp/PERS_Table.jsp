@@ -56,6 +56,7 @@
     <button onclick="uploadFile()">Télécharger</button>
 
     <!-- Ajax to Java File Upload Logic -->
+  <!-- end preloader -->
     <script>
       async function uploadFile() {
         let formData = new FormData();

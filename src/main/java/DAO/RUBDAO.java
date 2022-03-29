@@ -14,14 +14,21 @@ import Classes.RE;
 import com.linuxense.javadbf.DBFReader;
 import com.linuxense.javadbf.DBFRow;
 import com.linuxense.javadbf.DBFUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import static DAO.DB.*;
@@ -264,8 +271,8 @@ public class RUBDAO {
     }
 
 
-        public boolean isRetro(String matricule, String month, String year) {
-        String  eff = "";
+    public boolean isRetro(String matricule, String month, String year) {
+        String eff = "";
         try {
             String query = "SELECT * FROM rub_" + year + " WHERE matricule = ? AND mois = ? AND annee = ? ;";
 
@@ -273,8 +280,8 @@ public class RUBDAO {
             System.out.println("Database connection established");
             PreparedStatement pStatement = connection.prepareStatement(query);
             pStatement.setString(1, matricule);
-            pStatement.setString(2,month);
-            pStatement.setString(3,year);
+            pStatement.setString(2, month);
+            pStatement.setString(3, year);
             ResultSet resultSet = pStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -290,7 +297,7 @@ public class RUBDAO {
         return false;
     }
 
-//    public String[] getGrpEch(String matricule, String month, String year){
+///    public String[] getGrpEch(String matricule, String month, String year){
 //        String date = month+"/"+year;
 //        String[] rus = new String[2];
 //        try {
@@ -320,6 +327,7 @@ public class RUBDAO {
         ResultSet tables = dbm.getTables(null, null, table, null);
         // Table exists return tru
         // Table does not exist return false
+        connection.close();
         return tables.next();
     }
 
@@ -336,15 +344,18 @@ public class RUBDAO {
             ResultSet resultSet = pStatement.executeQuery();
             // if a record found return true
             System.out.println("Database Connection Terminated");
-            if (resultSet.next()) return true;
+            if (resultSet.next()){
+                connection.close();
+                return true;
+            }
             pStatement.close();
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-
-        return true;
+        // todo : fix null in datenais in PERS and datefin in RUB
+        return false;
     }
 
 
@@ -445,7 +456,193 @@ public class RUBDAO {
 
     }
 
-//    public String[][] CalBP(String[][] data) {
+    public LinkedHashMap<String, String> readXLSRUB(String file, String firstHeader) throws IOException {
+
+        File excelFile = new File(file);
+        FileInputStream fis = new FileInputStream(excelFile);
+
+        // we create an XSSF Workbook object for our XLSX Excel File
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        // we get first sheetc
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        // we iterate on rows
+        Iterator<Row> rowIt = sheet.iterator();
+        LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
+        int i = 1;
+        while (rowIt.hasNext()) {
+            Row row = rowIt.next();
+            // iterate on cells for the current row
+            Iterator<Cell> cellIterator = row.cellIterator();
+            int cpt = 0;
+            while (cellIterator.hasNext()) {
+                // todo : add an arg her so we can skip the header
+                Cell cell = cellIterator.next();
+                // if we find MAT (it is the first header in pers file we break
+                if (cpt == 25) break; // bcz after 80 col we dont need to process that
+                if (firstHeader.equals(cell.toString())) break;
+                // we need to get number of col
+                // use this website for ez ref
+                // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
+                //
+                switch (cpt) {
+                    case 0:
+                        infoList.put("dateexpl" + i, cell.toString());
+                        break;
+                    case 1:
+                        infoList.put("matricule" + i, cell.toString());
+                        break;
+                    case 16:
+                        infoList.put("numrub" + i, cell.toString());
+                        break;
+                    case 13:
+                        infoList.put("mois" + i, cell.toString());
+                        break;
+                    case 14:
+                        infoList.put("annee" + i, cell.toString());
+                        break;
+                    case 17:
+                        infoList.put("librub" + i, cell.toString());
+                        break;
+                    case 18:
+                        infoList.put("code_natur" + i, cell.toString());
+                        break;
+                    case 19:
+                        if (!infoList.get("code_natur" + i).equals("1"))
+                            infoList.put("datedeb" + i, cell.toString());
+                        else
+                            infoList.put("datedeb" + i, null);
+                        break;
+                    case 20:
+                        if (!infoList.get("code_natur" + i).equals("1"))
+                            infoList.put("datefin" + i, cell.toString());
+                        else
+                            infoList.put("datefin" + i, null);
+                        break;
+                    case 21:
+                        if (infoList.get("code_natur" + i).equals("1"))
+                            infoList.put("montantmois" + i, cell.toString());
+                        break;
+                    case 22:
+                        if (infoList.get("code_natur" + i).equals("2"))
+                            infoList.put("montantmois" + i, cell.toString());
+                        break;
+                    case 23:
+                        infoList.put("taux" + i, cell.toString());
+                        break;
+                    case 24:
+                        infoList.put("base" + i, cell.toString());
+                        break;
+                }
+                cpt++;
+            }
+            i++;
+        }
+        workbook.close();
+        fis.close();
+
+        return infoList;
+
+    }
+
+
+    public void setRUBXLS(String file, String year, String month) {
+        String date = month + "/" + year;
+        String yearRub = "";
+        String yearEff = "";
+        try {
+            // sql query
+            String creat = "CREATE TABLE rub_" + year + "(id int NOT NULL AUTO_INCREMENT," +
+                    "matricule VARCHAR(30) NOT NULL,dateexpl VARCHAR(8),numRub VARCHAR(3),librub VARCHAR(255)," +
+                    "datedeb VARCHAR(8),datefin VARCHAR(8),montantmois DECIMAL(19,2) ,taux DECIMAL(19,2)," +
+                    "base DECIMAL(19,2),mois varchar(3),annee varchar(5),PRIMARY KEY (id));";
+            String delete = "DELETE FROM rub_" + year + " WHERE mois = ? AND annee = ? ;";
+
+            // create a DBFReader object
+            DBFReader reader = new DBFReader(new FileInputStream(file));
+
+            // Now, lets us start reading the rows
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            PreparedStatement pStatement;
+
+            if (!check("rub_" + year)) {
+                System.out.println("table rub_" + year + " do not exist");
+                System.out.println("creating rub_" + year);
+                pStatement = connection.prepareStatement(creat);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            if (checkDate(year, month)) {
+                System.out.println(date + "already exist in table rub_" + year);
+                System.out.println("deletion of the old insertion");
+                pStatement = connection.prepareStatement(delete);
+                pStatement.setString(1, month);
+                pStatement.setString(2, year);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
+            infoList = readXLSRUB(file, "DATE_EXPL");
+
+            //if it makes error use CODE_NATUR to determine if it has a "rappel" or not .
+            for (int i = 0; i <= infoList.size(); i++) {
+                if (!(infoList.get("matricule" + i) == null)) {
+                    yearRub = infoList.get("annee" + i);
+
+                    if (!year.equals(yearRub)) {
+                        // test annee actif si il existe table rub de cette annee
+                        if (!check("rub_" + yearRub)) {
+                            System.out.println("table rub_" + yearRub + " do not exist");
+                            System.out.println("creating rub_" + yearRub);
+                            String creatRub = "CREATE TABLE rub_" + yearRub + "(id int NOT NULL AUTO_INCREMENT," +
+                                    "matricule VARCHAR(30) NOT NULL,dateexpl VARCHAR(8),numRub VARCHAR(3),librub VARCHAR(255)," +
+                                    "datedeb VARCHAR(8),datefin VARCHAR(8),montantmois DECIMAL(19,2) ,taux DECIMAL(19,2)," +
+                                    "base DECIMAL(19,2),mois varchar(3),annee varchar(5),PRIMARY KEY (id));";
+                            pStatement = connection.prepareStatement(creatRub);
+                            pStatement.executeUpdate();
+                            pStatement.close();
+                        }
+                        yearEff = yearRub;
+                    } else yearEff = year;
+
+                    String Add = "INSERT INTO rub_" + yearEff + "(matricule, dateexpl, numrub, librub, datedeb," +
+                            "datefin, montantmois, taux, base,mois,annee) VALUES(?,?,?,?,?,?,?,?,?,?,?);";
+
+//                BigDecimal MT_MOIS = new BigDecimal(row.getString("MT_MOIS"));
+                    BigDecimal MT_MOIS, taux, ELEM_STAT;
+
+                    pStatement = connection.prepareStatement(Add);
+                    pStatement.setString(1, infoList.get("matricule" + i));
+                    pStatement.setString(2, infoList.get("dateexpl" + i));
+                    pStatement.setString(3, infoList.get("numrub" + i));
+                    System.out.println("row "+i+" "+infoList.get("numrub" + i)) ;
+                    pStatement.setString(4, infoList.get("librub" + i));
+                    pStatement.setString(5, infoList.get("datedeb" + i));
+                    pStatement.setString(6, infoList.get("detfin" + i));
+                    MT_MOIS = new BigDecimal(infoList.get("montantmois" + i));
+                    pStatement.setBigDecimal(7, MT_MOIS);
+                    taux = new BigDecimal(infoList.get("taux" + i));
+                    pStatement.setBigDecimal(8, taux);
+                    ELEM_STAT = new BigDecimal(infoList.get("base" + i));
+                    pStatement.setBigDecimal(9, ELEM_STAT);
+                    pStatement.setString(10, infoList.get("mois" + i));
+                    pStatement.setString(11, infoList.get("annee" + i));
+
+                    pStatement.executeUpdate();
+                    pStatement.close();
+
+                }
+            }
+            connection.close();
+
+        } catch (SQLException | IOException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+
+    //    public String[][] CalBP(String[][] data) {
 //        String[][] total = new String[1][7];
 //        double GainsImp = 0;
 //        double GainsNonImp = 0;
@@ -490,7 +687,7 @@ public class RUBDAO {
 //        return total;
 //    }
 //
-public String[][] CalBP(String[][] data) {
+    public String[][] CalBP(String[][] data) {
     String[][] total = new String[1][7];
     double GainsImp = 0;
     double GainsNonImp = 0;
