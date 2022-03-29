@@ -11,14 +11,30 @@ package DAO;
 import com.linuxense.javadbf.DBFReader;
 import com.linuxense.javadbf.DBFRow;
 import com.linuxense.javadbf.DBFUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import static DAO.DB.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 
 public class PERSDAO {
     public LinkedHashMap<String ,String> getAllPERS(String year,String month) {
@@ -259,5 +275,189 @@ public class PERSDAO {
             throwables.printStackTrace();
         }
 
+    }
+
+    public void setPERSXLS(String file,String year,String month){
+
+        String date = month+"/"+year;
+        try {
+            String creat = "CREATE TABLE pers_"+year+"(" +
+                    "id INT NOT NULL AUTO_INCREMENT," +
+                    " matricule VARCHAR(30)  NOT NULL," +
+                    " dateexpl VARCHAR(8)," +
+                    " nom VARCHAR(600) NOT NULL," +
+                    " str VARCHAR(5) NOT NULL," +
+                    " loctrav int,"+
+                    " datenais varchar(8)," +
+                    " codelieunais varchar(4)," +
+                    " sexe char," +
+                    " fonction VARCHAR(600) NOT NULL," +
+                    " daterec varchar(8)," +
+                    " gsang varchar(3)," +
+                    " sf char," +
+                    " adresse VARCHAR(600) NOT NULL," +
+                    " nbrenfm10 int," +
+                    " nbrenfs10 int," +
+                    " scjt char," +
+                    " rib varchar(25)," +
+                    " nssagt varchar(12)," +
+                    " nssemp varchar(12)," +
+                    " cpaiem varchar(12)," +
+                    " iag DECIMAL(19 , 2 )," +
+                    " salbase DECIMAL(19 , 2 )," +
+                    "groupe varchar(4),"+
+                    "echelle varchar(4),"+
+                    "css char,"+
+                    "suitorg varchar(3), "+
+                    " PRIMARY KEY (id)," +
+                    " FOREIGN KEY (codelieunais) REFERENCES localite(codelieunais)," +
+                    " FOREIGN KEY (str) REFERENCES structure(codestr)" +
+                    ");";
+
+            String add = "INSERT INTO pers_"+year+"(matricule,nom,str,loctrav,datenais,codelieunais,sexe,fonction" +
+                    ",daterec,gsang,sf,adresse,nbrenfm10,nbrenfs10,scjt,rib,nssagt,nssemp,cpaiem,iag,salbase,dateexpl," +
+                    "groupe,echelle,css,suitorg)"+
+                    " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+
+            String delete = "DELETE FROM pers_" + year + " WHERE dateexpl = '"+date+"'";
+            // Now, lets us start reading the rows
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            PreparedStatement pStatement;
+            if (!check("pers_" + year)) {
+                System.out.println("table pers_"+year+" do not exist");
+                System.out.println("creating pers_"+year);
+                pStatement = connection.prepareStatement(creat);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            if (checkDate(year, month)){
+                System.out.println(date + "already exist in table pers_"+year);
+                System.out.println("deletion of the old insertion");
+                pStatement = connection.prepareStatement(delete);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            FileInputStream fis = new FileInputStream(file);
+            // we create an XSSF Workbook object for our XLSX Excel File
+            XSSFWorkbook workbook = new XSSFWorkbook(fis);
+            // we get first sheet
+            XSSFSheet sheet = workbook.getSheetAt(0);
+
+            // we iterate on rows
+            Iterator<Row> rowIt = sheet.iterator();
+            LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
+            int i = 1;
+            while (rowIt.hasNext()) {
+                pStatement = connection.prepareStatement(add);
+                Row row = rowIt.next();
+                // iterate on cells for the current row
+                Iterator<Cell> cellIterator = row.cellIterator();
+                int cpt = 0;
+                while (cellIterator.hasNext()) {
+                    // todo : add an arg her so we can skip the header
+                    Cell cell = cellIterator.next();
+                    // if we find MAT (it is the first header in pers file we break
+                    if (cpt == 87) break; // bcz after 80 col we dont need to process that
+                    if ("MAT".equals(cell.toString())) break;
+                    // we need to get number of col
+                    // use this website for ez ref
+                    // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
+                    //
+                    switch (cpt) {
+                        case 0:
+                            pStatement.setString(1, cell.toString());
+                            pStatement.setString(22,date);
+                            break;
+                        case 3 :
+                            infoList.put("suitorg"+i, cell.toString());
+                            break;
+                        case 4:
+                            pStatement.setString(4, cell.toString());
+                            break;
+                        case 6:
+                            pStatement.setString(2,cell.toString());
+                            break;
+                        case 2:
+                            pStatement.setString(3, cell.toString());
+                            break;
+                        case 9:
+                            pStatement.setString(6, ((cell.toString().isEmpty()) ? "ETRG" : cell.toString()));
+                            break;
+                        case 8:
+                            pStatement.setString(5, cell.toString());
+                            break;
+                        case 10:
+                            pStatement.setString(7, cell.toString());
+                            break;
+                        case 12:
+                            pStatement.setString(9,cell.toString());
+                            break;
+                        case 16:
+                            pStatement.setString(11, cell.toString());
+                            break;
+                        case 17:
+                            pStatement.setString(15, cell.toString());
+                            break;
+                        case 19:
+                            pStatement.setString(14, cell.toString());
+                            break;
+                        case 20:
+                            pStatement.setString(13,cell.toString());
+                            break;
+                        case 21:
+                            pStatement.setString(10, cell.toString());
+                            break;
+                        case 33:
+                            pStatement.setString(23,cell.toString());
+                            break;
+                        case 34:
+                            pStatement.setString(24, cell.toString());
+                            break;
+                        case 41:
+                            BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                            pStatement.setBigDecimal(21, SALBASE);
+                            break;
+                        case 44:
+                            pStatement.setString(8,cell.toString());
+                            break;
+                        case 49:
+                            pStatement.setString(19, cell.toString());
+                            break;
+                        case 53:
+                            pStatement.setString(25,cell.toString());
+                            break;
+                        case 57:
+                            pStatement.setString(17, cell.toString());
+                            break;
+                        case 58:
+                            pStatement.setString(18, cell.toString());
+                            break;
+                        case 73:
+                            pStatement.setString(12, cell.toString());
+                            break;
+                        case 82 :
+                            pStatement.setString(16, cell.toString());
+                            break;
+                        case 86:
+                            BigDecimal IAG = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                            pStatement.setBigDecimal(20, IAG);
+                            break;
+                    }
+                    cpt++;
+                }
+                pStatement.executeUpdate();
+                pStatement.close();
+                i++;
+            }
+            workbook.close();
+            fis.close();
+
+            System.out.println(infoList);
+        } catch (SQLException | FileNotFoundException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

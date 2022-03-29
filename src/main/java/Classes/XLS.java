@@ -19,7 +19,7 @@ public class XLS {
 
         // we create an XSSF Workbook object for our XLSX Excel File
         XSSFWorkbook workbook = new XSSFWorkbook(fis);
-        // we get first sheet
+        // we get first sheetc
         XSSFSheet sheet = workbook.getSheetAt(0);
 
         // we iterate on rows
@@ -97,8 +97,10 @@ public class XLS {
                     case 44:
                         infoList.put("fonction" + i, cell.toString());
                         break;
-                    case 53:
+                    case 49:
                         infoList.put("cpaiem" + i, cell.toString());
+                    case 53:
+                        infoList.put("css" + i, cell.toString());
                         break;
                     case 57:
                         infoList.put("nssagt" + i, cell.toString());
@@ -115,8 +117,6 @@ public class XLS {
                     case 86:
                         infoList.put("iag" + i, cell.toString());
                         break;
-
-
                 }
                 cpt++;
             }
@@ -128,5 +128,7 @@ public class XLS {
 
         System.out.println(infoList);
     }
+
+
 
 }
