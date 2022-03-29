@@ -16,25 +16,19 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import static DAO.DB.*;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import static DAO.DB.*;
+
 
 public class PERSDAO {
     public LinkedHashMap<String ,String> getAllPERS(String year,String month) {
@@ -163,7 +157,7 @@ public class PERSDAO {
             return false;
         }
 
-        return true;
+        return false;
     }
 
     public void setPERS(String file,String year,String month){
@@ -277,11 +271,132 @@ public class PERSDAO {
 
     }
 
-    public void setPERSXLS(String file,String year,String month){
+    public LinkedHashMap<String ,String> readXLSPERS(String file, String firstHeader) throws IOException {
 
-        String date = month+"/"+year;
+        File excelFile = new File(file);
+        FileInputStream fis = new FileInputStream(excelFile);
+
+        // we create an XSSF Workbook object for our XLSX Excel File
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        // we get first sheetc
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        // we iterate on rows
+        Iterator<Row> rowIt = sheet.iterator();
+        LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
+        int i = 1;
+        while (rowIt.hasNext()) {
+            Row row = rowIt.next();
+            // iterate on cells for the current row
+            Iterator<Cell> cellIterator = row.cellIterator();
+            int cpt = 0;
+            while (cellIterator.hasNext()) {
+                // todo : add an arg her so we can skip the header
+                Cell cell = cellIterator.next();
+                // if we find MAT (it is the first header in pers file we break
+                if (cpt == 87) break; // bcz after 80 col we dont need to process that
+                if (firstHeader.equals(cell.toString())) break;
+                // we need to get number of col
+                // use this website for ez ref
+                // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
+                //
+                switch (cpt) {
+                    case 0:
+                        infoList.put("matricule" + i, cell.toString());
+                        break;
+                    case 3:
+                        infoList.put("suitorg" + i, cell.toString());
+                        break;
+                    case 4:
+                        infoList.put("loctrav" + i, cell.toString());
+                        break;
+                    case 6:
+                        infoList.put("nom" + i, cell.toString());
+                        break;
+                    case 2:
+                        infoList.put("str" + i, cell.toString());
+                        break;
+                    case 9:
+//                        if (cell.toString().isEmpty())
+//                            infoList.put("codelieunais" + i, "");
+//                         else
+                             infoList.put("codelieunais" + i, cell.toString());
+                        break;
+                    case 8:
+                        infoList.put("datenais" + i, cell.toString());
+                        break;
+                    case 10:
+                        infoList.put("sexe" + i, cell.toString());
+                        break;
+                    case 12:
+                        infoList.put("daterec" + i, cell.toString());
+                        break;
+                    case 16:
+                        infoList.put("sf" + i, cell.toString());
+                        break;
+                    case 17:
+                        infoList.put("scjt" + i, cell.toString());
+                        break;
+                    case 19:
+                        infoList.put("nbrenfs10" + i, cell.toString());
+                        break;
+                    case 20:
+                        infoList.put("nbrenfm10" + i, cell.toString());
+                        break;
+                    case 21:
+                        infoList.put("gsang" + i, cell.toString());
+                        break;
+                    case 33:
+                        infoList.put("groupe" + i, cell.toString());
+                        break;
+                    case 34:
+                        infoList.put("echelle" + i, cell.toString());
+                        break;
+                    case 41:
+                        BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                        infoList.put("salbase" + i, String.valueOf(SALBASE));
+                        break;
+                    case 44:
+                        infoList.put("fonction" + i, cell.toString());
+                        break;
+                    case 49:
+                        infoList.put("cpaiem" + i, cell.toString());
+                    case 53:
+                        infoList.put("css" + i, cell.toString());
+                        break;
+                    case 57:
+                        infoList.put("nssagt" + i, cell.toString());
+                        break;
+                    case 58:
+                        infoList.put("nssemp" + i, cell.toString());
+                        break;
+                    case 73:
+                        infoList.put("adresse" + i, cell.toString());
+                        break;
+                    case 82:
+                        infoList.put("rib" + i, cell.toString());
+                        break;
+                    case 86:
+                        infoList.put("iag" + i, cell.toString());
+                        break;
+                }
+                cpt++;
+            }
+            i++;
+        }
+        workbook.close();
+        fis.close();
+
+        System.out.println(infoList);
+        return infoList;
+
+    }
+
+    public void setPERSXLS(String file, String year, String month) {
+
+        String date = month + "/" + year;
         try {
-            String creat = "CREATE TABLE pers_"+year+"(" +
+            String creat = "CREATE TABLE pers_" + year + "(" +
                     "id INT NOT NULL AUTO_INCREMENT," +
                     " matricule VARCHAR(30)  NOT NULL," +
                     " dateexpl VARCHAR(8)," +
@@ -338,122 +453,54 @@ public class PERSDAO {
                 pStatement.executeUpdate();
                 pStatement.close();
             }
-            FileInputStream fis = new FileInputStream(file);
-            // we create an XSSF Workbook object for our XLSX Excel File
-            XSSFWorkbook workbook = new XSSFWorkbook(fis);
-            // we get first sheet
-            XSSFSheet sheet = workbook.getSheetAt(0);
+            LinkedHashMap<String ,String> infoList = new LinkedHashMap<>();
+             infoList = readXLSPERS(file,"MAT");
 
-            // we iterate on rows
-            Iterator<Row> rowIt = sheet.iterator();
-            LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
-            int i = 1;
-            while (rowIt.hasNext()) {
-                pStatement = connection.prepareStatement(add);
-                Row row = rowIt.next();
-                // iterate on cells for the current row
-                Iterator<Cell> cellIterator = row.cellIterator();
-                int cpt = 0;
-                while (cellIterator.hasNext()) {
-                    // todo : add an arg her so we can skip the header
-                    Cell cell = cellIterator.next();
-                    // if we find MAT (it is the first header in pers file we break
-                    if (cpt == 87) break; // bcz after 80 col we dont need to process that
-                    if ("MAT".equals(cell.toString())) break;
-                    // we need to get number of col
-                    // use this website for ez ref
-                    // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
-                    //
-                    switch (cpt) {
-                        case 0:
-                            pStatement.setString(1, cell.toString());
-                            pStatement.setString(22,date);
-                            break;
-                        case 3 :
-                            infoList.put("suitorg"+i, cell.toString());
-                            break;
-                        case 4:
-                            pStatement.setString(4, cell.toString());
-                            break;
-                        case 6:
-                            pStatement.setString(2,cell.toString());
-                            break;
-                        case 2:
-                            pStatement.setString(3, cell.toString());
-                            break;
-                        case 9:
-                            pStatement.setString(6, ((cell.toString().isEmpty()) ? "ETRG" : cell.toString()));
-                            break;
-                        case 8:
-                            pStatement.setString(5, cell.toString());
-                            break;
-                        case 10:
-                            pStatement.setString(7, cell.toString());
-                            break;
-                        case 12:
-                            pStatement.setString(9,cell.toString());
-                            break;
-                        case 16:
-                            pStatement.setString(11, cell.toString());
-                            break;
-                        case 17:
-                            pStatement.setString(15, cell.toString());
-                            break;
-                        case 19:
-                            pStatement.setString(14, cell.toString());
-                            break;
-                        case 20:
-                            pStatement.setString(13,cell.toString());
-                            break;
-                        case 21:
-                            pStatement.setString(10, cell.toString());
-                            break;
-                        case 33:
-                            pStatement.setString(23,cell.toString());
-                            break;
-                        case 34:
-                            pStatement.setString(24, cell.toString());
-                            break;
-                        case 41:
-                            BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
-                            pStatement.setBigDecimal(21, SALBASE);
-                            break;
-                        case 44:
-                            pStatement.setString(8,cell.toString());
-                            break;
-                        case 49:
-                            pStatement.setString(19, cell.toString());
-                            break;
-                        case 53:
-                            pStatement.setString(25,cell.toString());
-                            break;
-                        case 57:
-                            pStatement.setString(17, cell.toString());
-                            break;
-                        case 58:
-                            pStatement.setString(18, cell.toString());
-                            break;
-                        case 73:
-                            pStatement.setString(12, cell.toString());
-                            break;
-                        case 82 :
-                            pStatement.setString(16, cell.toString());
-                            break;
-                        case 86:
-                            BigDecimal IAG = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
-                            pStatement.setBigDecimal(20, IAG);
-                            break;
-                    }
-                    cpt++;
+            for (int i = 0; i <=infoList.size(); i++) {
+                if (!(infoList.get("matricule"+i) == null)) {
+//                    connection = DriverManager.getConnection(url, username, password);
+//                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    pStatement = connection.prepareStatement(add);
+                    pStatement.setString(1, infoList.get("matricule" + i));
+                    pStatement.setString(2, infoList.get("nom" + i));
+                    pStatement.setString(3, infoList.get("str" + i));
+                    pStatement.setString(4, infoList.get("loctrav"+i));
+                    pStatement.setString(5, infoList.get("datebaus"+i));
+                    pStatement.setString(6, infoList.get("codelieunais" + i));
+
+
+
+                    pStatement.setString(7, infoList.get("sexe" + i));
+                    pStatement.setString(8,  infoList.get("fonction" + i));
+                    pStatement.setString(9, infoList.get("daterec" + i));
+                    pStatement.setString(10,  infoList.get("gsang" + i));
+                    pStatement.setString(11, infoList.get("sf" + i));
+                    pStatement.setString(12,  infoList.get("adresse" + i));
+                    pStatement.setString(13,  infoList.get("nbrenfm10" + i));
+                    pStatement.setString(14,  infoList.get("nbrenfs10" + i));
+                    pStatement.setString(15,  infoList.get("scjt" + i));
+                    pStatement.setString(16,  infoList.get("rib" + i));
+                    pStatement.setString(17,  infoList.get("nssagt" + i));
+                    pStatement.setString(18,  infoList.get("nssemp" + i));
+                    pStatement.setString(19,  infoList.get("cpaiem" + i));
+
+                    BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(infoList.get("salbase"+i)));
+                    BigDecimal IAG = BigDecimal.valueOf(Double.parseDouble(infoList.get("iag"+i)));
+                    pStatement.setBigDecimal(20, IAG);
+                    pStatement.setBigDecimal(21, SALBASE);
+                    pStatement.setString(22,date);
+                    pStatement.setString(23,infoList.get("groupe" + i));
+                    pStatement.setString(24,infoList.get("echelle" + i));
+                    pStatement.setString(25,infoList.get("css" + i));
+                    pStatement.setString(26,infoList.get("suitorg" + i));
+                    pStatement.executeUpdate();
+                    pStatement.close();
+                    System.out.println("user " + infoList.get("matricule"+i) + " added");
                 }
-                pStatement.executeUpdate();
-                pStatement.close();
-                i++;
-            }
-            workbook.close();
-            fis.close();
 
-            System.out.println(infoList);
+            }
+            connection.close();
+
         } catch (SQLException | FileNotFoundException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
         } catch (IOException e) {

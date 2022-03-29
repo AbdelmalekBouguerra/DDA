@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -29,6 +30,7 @@ public class XLS {
         while (rowIt.hasNext()) {
 
             Row row = rowIt.next();
+             row =  rowIt.next();
             // iterate on cells for the current row
             Iterator<Cell> cellIterator = row.cellIterator();
             int cpt = 0;
@@ -59,7 +61,8 @@ public class XLS {
                         infoList.put("str" + i, cell.toString());
                         break;
                     case 9:
-                        infoList.put("codelieunais" + i, cell.toString());
+                        if (cell.toString().isEmpty())  infoList.put("codelieunais" + i, "");
+                        else infoList.put("codelieunais" + i, cell.toString());
                         break;
                     case 8:
                         infoList.put("datenais" + i, cell.toString());
@@ -92,7 +95,8 @@ public class XLS {
                         infoList.put("echelle"+i, cell.toString());
                         break;
                     case 41:
-                        infoList.put("salbase" + i, cell.toString());
+                        BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                        infoList.put("salbase" + i, String.valueOf(SALBASE));
                         break;
                     case 44:
                         infoList.put("fonction" + i, cell.toString());

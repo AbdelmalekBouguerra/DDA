@@ -60,8 +60,7 @@ public class RUBUpload extends HttpServlet {
 
         RUBDAO rubdao = new RUBDAO();
         // updating RUB table
-        rubdao.setRUB(filePath+"\\"+fileName,year,month);
-//        rubdao.setPERS();
+        rubdao.setRUBXLS(filePath+"\\"+fileName,year,month);
         // track action
         String MAT = (String)session.getAttribute("username");
         HISDAO hisdao = new HISDAO();

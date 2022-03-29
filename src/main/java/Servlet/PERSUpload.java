@@ -62,7 +62,7 @@ public class PERSUpload extends HttpServlet {
 
         PERSDAO PERSdao = new PERSDAO();
         // updating str table
-        PERSdao.setPERS(filePath+"\\"+fileName,year,month);
+        PERSdao.setPERSXLS(filePath+"\\"+fileName,year,month);
         // track action
         String MAT = (String)session.getAttribute("username");
 
