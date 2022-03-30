@@ -465,7 +465,7 @@ public class PERSDAO {
                     pStatement.setString(2, infoList.get("nom" + i));
                     pStatement.setString(3, infoList.get("str" + i));
                     pStatement.setString(4, infoList.get("loctrav"+i));
-                    pStatement.setString(5, infoList.get("datebaus"+i));
+                    pStatement.setString(5, infoList.get("datenais"+i));
                     pStatement.setString(6, infoList.get("codelieunais" + i));
 
 

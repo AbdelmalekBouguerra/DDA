@@ -619,7 +619,7 @@ public class RUBDAO {
                     System.out.println("row "+i+" "+infoList.get("numrub" + i)) ;
                     pStatement.setString(4, infoList.get("librub" + i));
                     pStatement.setString(5, infoList.get("datedeb" + i));
-                    pStatement.setString(6, infoList.get("detfin" + i));
+                    pStatement.setString(6, infoList.get("datefin" + i));
                     MT_MOIS = new BigDecimal(infoList.get("montantmois" + i));
                     pStatement.setBigDecimal(7, MT_MOIS);
                     taux = new BigDecimal(infoList.get("taux" + i));
