@@ -31,6 +31,18 @@ import static DAO.DB.*;
 
 
 public class PERSDAO {
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     public LinkedHashMap<String ,String> getAllPERS(String year,String month) {
         String date = month+"/"+year;
         LinkedHashMap<String ,String> infoList = new LinkedHashMap<>();
@@ -289,23 +301,25 @@ public class PERSDAO {
             Row row = rowIt.next();
             // iterate on cells for the current row
             Iterator<Cell> cellIterator = row.cellIterator();
-            int cpt = 0;
             while (cellIterator.hasNext()) {
                 // todo : add an arg her so we can skip the header
                 Cell cell = cellIterator.next();
                 // if we find MAT (it is the first header in pers file we break
-                if (cpt == 87) break; // bcz after 80 col we dont need to process that
+                if (cell.getColumnIndex() == 87) break; // bcz after 80 col we dont need to process that
                 if (firstHeader.equals(cell.toString())) break;
                 // we need to get number of col
                 // use this website for ez ref
                 // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
                 //
-                switch (cpt) {
+                switch (cell.getColumnIndex()) {
                     case 0:
                         infoList.put("matricule" + i, cell.toString());
                         break;
                     case 3:
                         infoList.put("suitorg" + i, cell.toString());
+                        break;
+                    case 2:
+                        infoList.put("str" + i, cell.toString());
                         break;
                     case 4:
                         infoList.put("loctrav" + i, cell.toString());
@@ -313,17 +327,11 @@ public class PERSDAO {
                     case 6:
                         infoList.put("nom" + i, cell.toString());
                         break;
-                    case 2:
-                        infoList.put("str" + i, cell.toString());
-                        break;
-                    case 9:
-//                        if (cell.toString().isEmpty())
-//                            infoList.put("codelieunais" + i, "");
-//                         else
-                             infoList.put("codelieunais" + i, cell.toString());
-                        break;
                     case 8:
                         infoList.put("datenais" + i, cell.toString());
+                        break;
+                    case 9:
+                        infoList.put("codelieunais" + i, cell.toString());
                         break;
                     case 10:
                         infoList.put("sexe" + i, cell.toString());
@@ -364,10 +372,10 @@ public class PERSDAO {
                     case 53:
                         infoList.put("css" + i, cell.toString());
                         break;
-                    case 57:
+                    case 58:
                         infoList.put("nssagt" + i, cell.toString());
                         break;
-                    case 58:
+                    case 59:
                         infoList.put("nssemp" + i, cell.toString());
                         break;
                     case 73:
@@ -380,7 +388,6 @@ public class PERSDAO {
                         infoList.put("iag" + i, cell.toString());
                         break;
                 }
-                cpt++;
             }
             i++;
         }
@@ -398,19 +405,19 @@ public class PERSDAO {
         try {
             String creat = "CREATE TABLE pers_" + year + "(" +
                     "id INT NOT NULL AUTO_INCREMENT," +
-                    " matricule VARCHAR(30)  NOT NULL," +
+                    " matricule VARCHAR(30) ," +
                     " dateexpl VARCHAR(8)," +
-                    " nom VARCHAR(600) NOT NULL," +
-                    " str VARCHAR(5) NOT NULL," +
+                    " nom VARCHAR(600) ," +
+                    " str VARCHAR(5) ," +
                     " loctrav int,"+
                     " datenais varchar(8)," +
                     " codelieunais varchar(4)," +
                     " sexe char," +
-                    " fonction VARCHAR(600) NOT NULL," +
+                    " fonction VARCHAR(600) ," +
                     " daterec varchar(8)," +
                     " gsang varchar(3)," +
                     " sf char," +
-                    " adresse VARCHAR(600) NOT NULL," +
+                    " adresse VARCHAR(600) ," +
                     " nbrenfm10 int," +
                     " nbrenfs10 int," +
                     " scjt char," +

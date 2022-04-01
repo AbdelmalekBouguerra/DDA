@@ -361,9 +361,9 @@ public class Printer {
             String[][] data =sortingRub(rubdao.getRUB(MAT, month, year));
             String[][] total = rubdao.CalBP(data);
             Map<String, String> infoList = persdao.getPERS(MAT,year,month);
-
+            System.out.println("info \n"+infoList);
             // checking if pers of this month exist
-            if (null == infoList.get("nom")){
+            if (null == infoList.get("datenais")){
 
                 String lastmonth,lastyear;
                 if (DATE.GetMonthNum().equals("01")){
@@ -375,6 +375,7 @@ public class Printer {
                 }
 
                 infoList = persdao.getPERS(MAT,lastyear,lastmonth);
+                System.out.println(infoList);
             }
 
             // creation qr code.
@@ -518,7 +519,6 @@ public class Printer {
             doc.loadFromFile("C:\\template\\ReleveDesEmoluments.docx");
 
             // fetch data form DB
-
 
             String month,lastyear;
             if (DATE.GetMonthNum().equals("01")){

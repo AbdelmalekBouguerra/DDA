@@ -474,18 +474,18 @@ public class RUBDAO {
             Row row = rowIt.next();
             // iterate on cells for the current row
             Iterator<Cell> cellIterator = row.cellIterator();
-            int cpt = 0;
+
             while (cellIterator.hasNext()) {
                 // todo : add an arg her so we can skip the header
                 Cell cell = cellIterator.next();
                 // if we find MAT (it is the first header in pers file we break
-                if (cpt == 25) break; // bcz after 80 col we dont need to process that
+                if (cell.getColumnIndex() == 25) break; // bcz after 80 col we dont need to process that
                 if (firstHeader.equals(cell.toString())) break;
                 // we need to get number of col
                 // use this website for ez ref
                 // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
                 //
-                switch (cpt) {
+                switch (cell.getColumnIndex()) {
                     case 0:
                         infoList.put("dateexpl" + i, cell.toString());
                         break;
@@ -534,13 +534,12 @@ public class RUBDAO {
                         infoList.put("base" + i, cell.toString());
                         break;
                 }
-                cpt++;
             }
             i++;
         }
         workbook.close();
         fis.close();
-
+        System.out.println(infoList);
         return infoList;
 
     }
