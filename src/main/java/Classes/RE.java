@@ -103,6 +103,7 @@ public class RE {
     // Calculer RE à l'aide des dernières fonctions
     public static double[] getRE(String MAT, String year,String month) {
         String[][] data = RE.getRUB(MAT,month, year);
+        System.out.println("Printing data =======================");
         for (String[] datum : data) {
             if (datum != null) {
                 for (String s : datum) {
@@ -113,7 +114,6 @@ public class RE {
 
         }
 
-
         double SalaireBase,
                 SalaireUnique = 0,
                 PrimePanier = 0,
@@ -123,7 +123,7 @@ public class RE {
                 IndemniteInterim = 0,
                 Revalorisation = 0,
                 IFA = 0,
-                IAG,
+                IAG = 0,
                 IZCV = 0,
                 RAP_NOUR_IFA_TRANS_PAN = 0,
                 RAP_NUIS_ITP_SB_IAG = 0,
@@ -152,7 +152,7 @@ public class RE {
         // get IAG and salaire de base
         double[] sb_iag = getSB_IAG(MAT, month, year);
         SalaireBase = sb_iag[0];
-        IAG = sb_iag[1];
+        IAG = sb_iag[1] / 100;
 
         AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
                 + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
@@ -167,10 +167,7 @@ public class RE {
             // calculate prime panier and ind.Nourriture
             if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("147")){
-                IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
-                System.out.println(18+" * "+Double.parseDouble(data[j][2])+" = "+ IndNourriture);
-            }
+            if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("300")) AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("302")) Retraite = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("304")) RetraiteAnticipee = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
