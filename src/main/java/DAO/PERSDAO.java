@@ -11,16 +11,38 @@ package DAO;
 import com.linuxense.javadbf.DBFReader;
 import com.linuxense.javadbf.DBFRow;
 import com.linuxense.javadbf.DBFUtils;
-import static DAO.DB.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static DAO.DB.*;
+
+
 public class PERSDAO {
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
     public LinkedHashMap<String ,String> getAllPERS(String year,String month) {
         String date = month+"/"+year;
         LinkedHashMap<String ,String> infoList = new LinkedHashMap<>();
@@ -147,7 +169,7 @@ public class PERSDAO {
             return false;
         }
 
-        return true;
+        return false;
     }
 
     public void setPERS(String file,String year,String month){
@@ -259,5 +281,237 @@ public class PERSDAO {
             throwables.printStackTrace();
         }
 
+    }
+
+    public LinkedHashMap<String ,String> readXLSPERS(String file, String firstHeader) throws IOException {
+
+        File excelFile = new File(file);
+        FileInputStream fis = new FileInputStream(excelFile);
+
+        // we create an XSSF Workbook object for our XLSX Excel File
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+        // we get first sheetc
+        XSSFSheet sheet = workbook.getSheetAt(0);
+
+        // we iterate on rows
+        Iterator<Row> rowIt = sheet.iterator();
+        LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
+        int i = 1;
+        while (rowIt.hasNext()) {
+            Row row = rowIt.next();
+            // iterate on cells for the current row
+            Iterator<Cell> cellIterator = row.cellIterator();
+            while (cellIterator.hasNext()) {
+                // todo : add an arg her so we can skip the header
+                Cell cell = cellIterator.next();
+                // if we find MAT (it is the first header in pers file we break
+                if (cell.getColumnIndex() == 87) break; // bcz after 80 col we dont need to process that
+                if (firstHeader.equals(cell.toString())) break;
+                // we need to get number of col
+                // use this website for ez ref
+                // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
+                //
+                switch (cell.getColumnIndex()) {
+                    case 0:
+                        infoList.put("matricule" + i, cell.toString());
+                        break;
+                    case 3:
+                        infoList.put("suitorg" + i, cell.toString());
+                        break;
+                    case 2:
+                        infoList.put("str" + i, cell.toString());
+                        break;
+                    case 4:
+                        infoList.put("loctrav" + i, cell.toString());
+                        break;
+                    case 6:
+                        infoList.put("nom" + i, cell.toString());
+                        break;
+                    case 8:
+                        infoList.put("datenais" + i, cell.toString());
+                        break;
+                    case 9:
+                        infoList.put("codelieunais" + i, cell.toString());
+                        break;
+                    case 10:
+                        infoList.put("sexe" + i, cell.toString());
+                        break;
+                    case 12:
+                        infoList.put("daterec" + i, cell.toString());
+                        break;
+                    case 16:
+                        infoList.put("sf" + i, cell.toString());
+                        break;
+                    case 17:
+                        infoList.put("scjt" + i, cell.toString());
+                        break;
+                    case 19:
+                        infoList.put("nbrenfs10" + i, cell.toString());
+                        break;
+                    case 20:
+                        infoList.put("nbrenfm10" + i, cell.toString());
+                        break;
+                    case 21:
+                        infoList.put("gsang" + i, cell.toString());
+                        break;
+                    case 33:
+                        infoList.put("groupe" + i, cell.toString());
+                        break;
+                    case 34:
+                        infoList.put("echelle" + i, cell.toString());
+                        break;
+                    case 41:
+                        BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                        infoList.put("salbase" + i, String.valueOf(SALBASE));
+                        break;
+                    case 44:
+                        infoList.put("fonction" + i, cell.toString());
+                        break;
+                    case 49:
+                        infoList.put("cpaiem" + i, cell.toString());
+                    case 53:
+                        infoList.put("css" + i, cell.toString());
+                        break;
+                    case 58:
+                        infoList.put("nssagt" + i, cell.toString());
+                        break;
+                    case 59:
+                        infoList.put("nssemp" + i, cell.toString());
+                        break;
+                    case 73:
+                        infoList.put("adresse" + i, cell.toString());
+                        break;
+                    case 82:
+                        infoList.put("rib" + i, cell.toString());
+                        break;
+                    case 86:
+                        infoList.put("iag" + i, cell.toString());
+                        break;
+                }
+            }
+            i++;
+        }
+        workbook.close();
+        fis.close();
+
+        System.out.println(infoList);
+        return infoList;
+
+    }
+
+    public void setPERSXLS(String file, String year, String month) {
+
+        String date = month + "/" + year;
+        try {
+            String creat = "CREATE TABLE pers_" + year + "(" +
+                    "id INT NOT NULL AUTO_INCREMENT," +
+                    " matricule VARCHAR(30) ," +
+                    " dateexpl VARCHAR(8)," +
+                    " nom VARCHAR(600) ," +
+                    " str VARCHAR(5) ," +
+                    " loctrav int,"+
+                    " datenais varchar(8)," +
+                    " codelieunais varchar(4)," +
+                    " sexe char," +
+                    " fonction VARCHAR(600) ," +
+                    " daterec varchar(8)," +
+                    " gsang varchar(3)," +
+                    " sf char," +
+                    " adresse VARCHAR(600) ," +
+                    " nbrenfm10 int," +
+                    " nbrenfs10 int," +
+                    " scjt char," +
+                    " rib varchar(25)," +
+                    " nssagt varchar(12)," +
+                    " nssemp varchar(12)," +
+                    " cpaiem varchar(12)," +
+                    " iag DECIMAL(19 , 2 )," +
+                    " salbase DECIMAL(19 , 2 )," +
+                    "groupe varchar(4),"+
+                    "echelle varchar(4),"+
+                    "css char,"+
+                    "suitorg varchar(3), "+
+                    " PRIMARY KEY (id)," +
+                    " FOREIGN KEY (codelieunais) REFERENCES localite(codelieunais)," +
+                    " FOREIGN KEY (str) REFERENCES structure(codestr)" +
+                    ");";
+
+            String add = "INSERT INTO pers_"+year+"(matricule,nom,str,loctrav,datenais,codelieunais,sexe,fonction" +
+                    ",daterec,gsang,sf,adresse,nbrenfm10,nbrenfs10,scjt,rib,nssagt,nssemp,cpaiem,iag,salbase,dateexpl," +
+                    "groupe,echelle,css,suitorg)"+
+                    " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+
+            String delete = "DELETE FROM pers_" + year + " WHERE dateexpl = '"+date+"'";
+            // Now, lets us start reading the rows
+            Connection connection = DriverManager.getConnection(url, username, password);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            PreparedStatement pStatement;
+            if (!check("pers_" + year)) {
+                System.out.println("table pers_"+year+" do not exist");
+                System.out.println("creating pers_"+year);
+                pStatement = connection.prepareStatement(creat);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            if (checkDate(year, month)){
+                System.out.println(date + "already exist in table pers_"+year);
+                System.out.println("deletion of the old insertion");
+                pStatement = connection.prepareStatement(delete);
+                pStatement.executeUpdate();
+                pStatement.close();
+            }
+            LinkedHashMap<String ,String> infoList = new LinkedHashMap<>();
+             infoList = readXLSPERS(file,"MAT");
+
+            for (int i = 0; i <=infoList.size(); i++) {
+                if (!(infoList.get("matricule"+i) == null)) {
+//                    connection = DriverManager.getConnection(url, username, password);
+//                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    pStatement = connection.prepareStatement(add);
+                    pStatement.setString(1, infoList.get("matricule" + i));
+                    pStatement.setString(2, infoList.get("nom" + i));
+                    pStatement.setString(3, infoList.get("str" + i));
+                    pStatement.setString(4, infoList.get("loctrav"+i));
+                    pStatement.setString(5, infoList.get("datenais"+i));
+                    pStatement.setString(6, infoList.get("codelieunais" + i));
+
+
+
+                    pStatement.setString(7, infoList.get("sexe" + i));
+                    pStatement.setString(8,  infoList.get("fonction" + i));
+                    pStatement.setString(9, infoList.get("daterec" + i));
+                    pStatement.setString(10,  infoList.get("gsang" + i));
+                    pStatement.setString(11, infoList.get("sf" + i));
+                    pStatement.setString(12,  infoList.get("adresse" + i));
+                    pStatement.setString(13,  infoList.get("nbrenfm10" + i));
+                    pStatement.setString(14,  infoList.get("nbrenfs10" + i));
+                    pStatement.setString(15,  infoList.get("scjt" + i));
+                    pStatement.setString(16,  infoList.get("rib" + i));
+                    pStatement.setString(17,  infoList.get("nssagt" + i));
+                    pStatement.setString(18,  infoList.get("nssemp" + i));
+                    pStatement.setString(19,  infoList.get("cpaiem" + i));
+
+                    BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(infoList.get("salbase"+i)));
+                    BigDecimal IAG = BigDecimal.valueOf(Double.parseDouble(infoList.get("iag"+i)));
+                    pStatement.setBigDecimal(20, IAG);
+                    pStatement.setBigDecimal(21, SALBASE);
+                    pStatement.setString(22,date);
+                    pStatement.setString(23,infoList.get("groupe" + i));
+                    pStatement.setString(24,infoList.get("echelle" + i));
+                    pStatement.setString(25,infoList.get("css" + i));
+                    pStatement.setString(26,infoList.get("suitorg" + i));
+                    pStatement.executeUpdate();
+                    pStatement.close();
+                    System.out.println("user " + infoList.get("matricule"+i) + " added");
+                }
+
+            }
+            connection.close();
+
+        } catch (SQLException | FileNotFoundException | ClassNotFoundException throwables) {
+            throwables.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

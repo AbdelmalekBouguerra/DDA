@@ -149,13 +149,14 @@ ${msg}
     <button onclick="uploadFile()"> Télécharger </button>
 
 <!-- Ajax to Java File Upload Logic -->
+<!-- preloader -->
 <script>
     async function uploadFile() {
         let formData = new FormData();
         formData.append("file", ajaxfile.files[0]);
         await fetch('rubupload', {
             method: "POST",
-            body: formData
+            body: formData,
         });
         window.location.reload();
     }
