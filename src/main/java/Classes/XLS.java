@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 public class XLS {
 
     public static void main(String[] args) throws IOException {
-        File excelFile = new File("G:\\Mon Drive\\PFE\\Donne IAP\\PERS\\PERS_01_22.xlsx");
+        File excelFile = new File("G:\\Mon Drive\\PFE\\Donne IAP\\PERS\\pers_iap_01_2015.xlsx");
         FileInputStream fis = new FileInputStream(excelFile);
 
         // we create an XSSF Workbook object for our XLSX Excel File
@@ -30,7 +30,6 @@ public class XLS {
         while (rowIt.hasNext()) {
 
             Row row = rowIt.next();
-             row =  rowIt.next();
             // iterate on cells for the current row
             Iterator<Cell> cellIterator = row.cellIterator();
             int cpt = 0;
@@ -38,13 +37,13 @@ public class XLS {
                 // todo : add an arg her so we can skip the header
                 Cell cell = cellIterator.next();
                 // if we find MAT (it is the first header in pers file we break
-                if (cpt == 87) break; // bcz after 80 col we dont need to process that
+                if (cell.getColumnIndex() == 87) break; // bcz after 80 col we dont need to process that
                 if ("MAT".equals(cell.toString())) break;
                 // we need to get number of col
                 // use this website for ez ref
                 // https://www.vishalon.net/blog/excel-column-letter-to-number-quick-reference
                 //
-                switch (cpt) {
+                switch (cell.getColumnIndex()) {
                     case 0:
                         infoList.put("matricule" + i, cell.toString());
                         break;
