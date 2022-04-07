@@ -9,13 +9,57 @@
 
 package Classes;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Objects;
+
 import static DAO.DB.*;
 
 public class RE {
+
+    public static String[][] readIrgCsv(String file) {
+        // loading the csv file
+
+        String line = "";
+        String[][] value = new String[52900][];
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                value[i] = line.split(",");
+                i++;
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not founded");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("I/O error");
+            e.printStackTrace();
+        }
+        return value;
+    }
+
+    public static String calIRG(String file, double IRGB) {
+        String[][] IRGCsv = readIrgCsv(file);
+        // cast double to int to delete any decimal numbers
+        int num =  (((int) IRGB / 10) * 10);
+
+        for (int i = 0; i < IRGCsv.length; i++) {
+            if (IRGCsv[i] != null) {
+                for (int j = 0; j < IRGCsv[i].length; j++)
+                    if (IRGCsv[i][0].equals(String.valueOf(num)))
+                        return IRGCsv[i][1];
+            }
+        }
+        return null;
+    }
 
     // Obtenez d'abord toutes les données de l'année
     public static String[][] getRUB(String Matricule, String month, String year) {
@@ -101,8 +145,11 @@ public class RE {
     }
 
     // Calculer RE à l'aide des dernières fonctions
-    public static double[] getRE(String MAT, String year,String month) {
+    public static double[] getRE(String MAT, String year,String month) throws IOException {
         String[][] data = RE.getRUB(MAT,month, year);
+        if (data[0] == null){
+            throw new IOException("L'utilsateur "+MAT+" n'existe pas dans le RUB "+month+" "+ year);
+        }
         System.out.println("Printing data =======================");
         for (String[] datum : data) {
             if (datum != null) {
@@ -120,11 +167,13 @@ public class RE {
                 PrimeTransport = 0,
                 IndNuisance = 0,
                 IndNourriture = 0,
+                INDEMN_FRAIS_VOYAGE = 0,
                 IndemniteInterim = 0,
                 Revalorisation = 0,
                 IFA = 0,
                 IAG = 0,
                 IZCV = 0,
+                IZCV_Resident= 0,
                 RAP_NOUR_IFA_TRANS_PAN = 0,
                 RAP_NUIS_ITP_SB_IAG = 0,
                 IZIN = 0,
@@ -176,6 +225,57 @@ public class RE {
             if (data[j][0].equals("460")) PCR_MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
             /*
+             IZCV =======================================================================
+             IZCV (4x4) SR dans le fichier excel
+             279    I Z C V  B
+             281    I Z C V  C
+             283    I Z C V  D
+             285    I Z C V  E
+             287	I Z C V  F
+             289	I Z C V  G
+             291	I Z C V  H
+             293	I Z C V  J
+             295	I Z C V  K
+             297	I Z C V  L
+             299	I Z C V  A
+             */
+            if (data[j][0].equals("279")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("281")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("283")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("285")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("287")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("289")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("291")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("293")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("295")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("297")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("299")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            // ==========================================================================
+            /*
+            IZCV (NSR) Resident ================================================================
+            231 	I.Z.C.V. A  COTISABLE
+            233	    I.Z.C.V. B  COTISABLE
+            235	    I.Z.C.V. C  COTISABLE
+            237	    I.Z.C.V. D  COTISABLE
+            239	    I.Z.C.V. E  COTISABLE
+            241	    I.Z.C.V. F  COTISABLE
+            243	    I.Z.C.V. G  COTISABLE
+            245	    I.Z.C.V. H  COTISABLE
+             */
+            if (data[j][0].equals("231")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("233")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("235")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("237")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("239")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("241")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("243")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("245")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            // =================================================================================
+            if (data[j][0].equals("120")) IndemniteInterim = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("256")) INDEMN_FRAIS_VOYAGE = Double.parseDouble(data[j][1]);
+
+
+            /*
                 448 - RET. PRET ACHAT LOGEMENT
                 446 - RET. PRET CONSTRUCTION
                 450 - RET.ASS.VIE/PRET CONSTR.OSL
@@ -202,20 +302,23 @@ public class RE {
         GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
                 + PrimeTransport + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
                 + IZCV + IAG;
-        GainsNonImpo = SalaireUnique;
+
+        GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV_Resident;
+
         RetenuesNonImposable = AssuranceSociale + Retraite + RetAssuanceChomage + RetraiteAnticipee + PCR_MIP;
 
         IRGRapB = IndemniteInterim + IZIN + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN
                 + RAP_NOUR_IFA_TRANS_PAN;
 
         IRGB = GainsImpo - IZCV - IRGRapB - RetenuesNonImposable;
+        String file = "C:\\template\\IRG.csv";
 
-        IRG = getIRG(IRGB);
+        IRG = Double.parseDouble(Objects.requireNonNull(calIRG(file, IRGB)));
         int nbrMois = 1;
         double temp = IRGRapB + (IRGB / nbrMois);
 
 
-        IRGRap = (getIRG(temp) - IRG) * nbrMois; // div par mois de rap
+        IRGRap = (Double.parseDouble(Objects.requireNonNull(calIRG(file, temp))) - IRG) * nbrMois; // div par mois de rap
 
         RetenuesImposable = MIP + RetPret + IRG + IRGRap + TiersPayant;
 
@@ -230,6 +333,8 @@ public class RE {
         System.out.println("AssuranceSocialeB : " + AssuranceSocialeB);
         System.out.println("AssuranceSociale : " + AssuranceSociale);
         System.out.println("SalaireUnique : " + SalaireUnique);
+        System.out.println("IZCV : " + IZCV);
+        System.out.println("IZCV_Resident : " + IZCV_Resident);
         System.out.println("IAG : " + IAG);
         System.out.println("Retraite : " + Retraite);
         System.out.println("RetAssuanceChomage  : " + RetAssuanceChomage);

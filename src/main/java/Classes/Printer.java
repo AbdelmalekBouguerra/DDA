@@ -19,6 +19,7 @@ import com.spire.pdf.PdfDocument;
 import com.spire.pdf.xmp.XmpMetadata;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -498,7 +499,7 @@ public class Printer {
         }
     }
 
-    public void PrintRE(String year) {
+    public void PrintRE(String year) throws IOException {
         HISDAO hisdao = new HISDAO();
 
         // check file if exist or not
@@ -529,7 +530,8 @@ public class Printer {
                 lastyear =  DATE.GetYear();
             }
             Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
-
+            // fix her 01 bcz i dont have 03
+            // todo change it
             double[] net = RE.getRE(MAT, lastyear,month);
 
 
@@ -590,7 +592,7 @@ public class Printer {
 
     }
 
-    public void PrintRED(String year) {
+    public void PrintRED(String year) throws IOException {
         HISDAO hisdao = new HISDAO();
 
         // check file if exist or not
