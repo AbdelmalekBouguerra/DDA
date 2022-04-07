@@ -178,7 +178,7 @@ public class RE {
                 RAP_NUIS_ITP_SB_IAG = 0,
                 IZIN = 0,
                 ITP = 0,
-                AssuranceSocialeB,
+                AssuranceSocialeB = 0,
                 AssuranceSociale = 0,
                 Retraite = 0,
                 RetraiteAnticipee = 0,
@@ -197,14 +197,10 @@ public class RE {
                 RetenuesImposable,
                 RetenuesNonImposable;
 
-
         // get IAG and salaire de base
         double[] sb_iag = getSB_IAG(MAT, month, year);
         SalaireBase = sb_iag[0];
         IAG = sb_iag[1] / 100;
-
-        AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
-                + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
 
         int j = 0;
         while (data[j] != null) {
@@ -217,7 +213,6 @@ public class RE {
             if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("300")) AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("302")) Retraite = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("304")) RetraiteAnticipee = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("308")) RetAssuanceChomage = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
@@ -296,7 +291,13 @@ public class RE {
             if (data[j][0].equals("4BR")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BE")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("408")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("300")) {
+                AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
+                        + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
+                AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
+            }
             j++;
+
         }
 
         GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
@@ -330,6 +331,7 @@ public class RE {
         System.out.println("SalaireBase : " + SalaireBase);
         System.out.println("PrimePanier : " + PrimePanier);
         System.out.println("IndNourriture : " + IndNourriture);
+        System.out.println("IndemniteInterim : " + IndemniteInterim);
         System.out.println("AssuranceSocialeB : " + AssuranceSocialeB);
         System.out.println("AssuranceSociale : " + AssuranceSociale);
         System.out.println("SalaireUnique : " + SalaireUnique);
