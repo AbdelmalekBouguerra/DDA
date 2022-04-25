@@ -140,6 +140,27 @@ public class PERSDAO {
         return infoList;
     }
 
+    public static boolean isMatriculeExist(String matricule,String year) {
+        try {
+            String query = "SELECT * FROM pers_"+year+" where matricule = ?;";
+            Connection connection = DriverManager.getConnection(url, username, password);
+            System.out.println("Database connection established");
+            PreparedStatement pStatement = connection.prepareStatement(query);
+            pStatement.setString(1,matricule);
+            ResultSet resultSet = pStatement.executeQuery();
+            while (resultSet.next()) {
+                return  true;
+            }
+            connection.close();
+            pStatement.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
     public boolean check(String table) throws SQLException {
         Connection connection = DriverManager.getConnection(url, username, password);
         DatabaseMetaData dbm = connection.getMetaData();

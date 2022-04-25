@@ -3,6 +3,7 @@ package Servlet;
 
 import Classes.DATE;
 import Classes.Printer;
+import DAO.PERSDAO;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -17,7 +18,6 @@ public class AT extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        long startTime = System.nanoTime();
 
         HttpSession session = request.getSession();
         String MAT = (String)session.getAttribute("username");
@@ -36,33 +36,34 @@ public class AT extends HttpServlet {
         session.removeAttribute("type");
         String year = DATE.GetYear();
         String  day = DATE.GetDayNum();
+        if (PERSDAO.isMatriculeExist(MAT,year)){
+            Printer printer = new Printer(MAT);
+            printer.PrintAT();
 
+            String fileName = "ATS"+ MAT +"_"+ day +"_" + DATE.GetMonthNum() + "_" + year+".pdf";
+            response.addHeader("Content-Disposition", "inline; filename=Attestation de travail.pdf");
 
-        Printer printer = new Printer(MAT);
-        printer.PrintAT();
+            response.setContentType("application/pdf");
+            ServletContext ctx = getServletContext();
 
-        String fileName = "ATS"+ MAT +"_"+ day +"_" + DATE.GetMonthNum() + "_" + year+".pdf";
-        response.addHeader("Content-Disposition", "inline; filename=Attestation de travail.pdf");
+            InputStream is = ctx.getResourceAsStream("RESULT/AttestationDeTravail/"+fileName);
 
-        response.setContentType("application/pdf");
-        ServletContext ctx = getServletContext();
+            int read = 0;
+            byte bytes[] = new byte[1024];
 
-        InputStream is = ctx.getResourceAsStream("RESULT/AttestationDeTravail/"+fileName);
-
-        int read = 0;
-        byte bytes[] = new byte[1024];
-
-        OutputStream os = response.getOutputStream();
-        while ((read = is.read(bytes)) != -1) {
-            os.write(bytes, 0, read);
+            OutputStream os = response.getOutputStream();
+            while ((read = is.read(bytes)) != -1) {
+                os.write(bytes, 0, read);
+            }
+            os.flush();
+            os.close();
+        }else {
+            request.setAttribute("invalidUname", "Matricule invalide");
+            request.getRequestDispatcher("MatriculeAT.jsp").forward(request, response);
         }
-        os.flush();
-        os.close();
-        long endTime = System.nanoTime();
 
-        long duration = (endTime - startTime)/1000000/1000;
-        out.println("======================================");
-        out.println("time to prepare AT is :"+duration+" s ");
+
+
 
     }
 }

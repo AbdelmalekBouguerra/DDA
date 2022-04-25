@@ -51,7 +51,8 @@
 						<button class="login100-form-btn">
 							Rechercher
 						</button>
-						${invalidUname}
+						<p style="color: red;font-size: 20px">${invalidUname}</p>
+
 					</div>
     <br><br><br>
 
