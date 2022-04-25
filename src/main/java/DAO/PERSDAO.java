@@ -191,7 +191,7 @@ public class PERSDAO {
                     " daterec varchar(8)," +
                     " gsang varchar(3)," +
                     " sf char," +
-                    " adresse VARCHAR(600) NOT NULL," +
+                    " adresse VARCHAR(600)," +
                     " nbrenfm10 int," +
                     " nbrenfs10 int," +
                     " scjt char," +
@@ -205,9 +205,7 @@ public class PERSDAO {
                     "echelle varchar(4),"+
                     "css char,"+
                     "suitorg varchar(3), "+
-                    " PRIMARY KEY (id)," +
-                    " FOREIGN KEY (codelieunais) REFERENCES localite(codelieunais)," +
-                    " FOREIGN KEY (str) REFERENCES structure(codestr)" +
+                    " PRIMARY KEY (id)" +
                     ");";
 
             String add = "INSERT INTO pers_"+year+"(matricule,nom,str,loctrav,datenais,codelieunais,sexe,fonction" +
@@ -361,8 +359,10 @@ public class PERSDAO {
                         infoList.put("echelle" + i, cell.toString());
                         break;
                     case 41:
-                        BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
-                        infoList.put("salbase" + i, String.valueOf(SALBASE));
+                        if (!(cell.toString().isEmpty())) {
+                            BigDecimal SALBASE = BigDecimal.valueOf(Double.parseDouble(cell.toString()) / 100);
+                            infoList.put("salbase" + i, String.valueOf(SALBASE));
+                        } else infoList.put("salbase" + i, "");
                         break;
                     case 44:
                         infoList.put("fonction" + i, cell.toString());
