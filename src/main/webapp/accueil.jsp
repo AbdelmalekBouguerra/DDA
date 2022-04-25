@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html lang="en" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html lang="en" class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -131,7 +131,7 @@ ${error}
                     <li class="current"><a href="#body">Accueil</a></li>
                     <!--<li><a href="#features">Présentation de l’IAP</a></li>-->
                     <li><a href="#works">Documents Administratifs</a></li>
-                    <li><a href="#features">Documents utils</a>
+                    <li><a href="#features">Documentation Utile</a>
                       
                          <!--<li><a href="#">Règlementation</a>
                             <ul  class="sous-menu">
@@ -289,7 +289,7 @@ ${error}
             <div class="row">
 
                 <div class="sec-title text-center mb50 wow bounceInDown animated" data-wow-duration="500ms">
-                    <h2>Documents Utils</h2>
+                    <h2>Documentation Utile</h2>
                     <div class="devider"><img src="img2/icon-make.png" class="sona-icon"></div>
                 </div>
 
@@ -307,6 +307,8 @@ ${error}
                                -&nbsp;&nbsp;<a href="doc-dgp/Conv.pdf" target="_blank" >Convention Collective de l’Entreprise</a><br>
                                -&nbsp;&nbsp;<a href="doc-dgp/Code d'ethique de SONATRACH.pdf" target="_blank" >Charte d’éthique de l’Entreprise</a><br>
                                -&nbsp;&nbsp;<a href="doc-dgp/Note d'orientation stratégique IAP.pdf" target="_blank" >Plan Développement IAP</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Politique HSE.pdf" target="_blank" >Politique HSE</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Charte d'utilisation du système d'information SONATRACH.pdf" target="_blank" >Charte d'utilisation du système d'information &nbsp;&nbsp;SONATRACH.</a><br>
 
 
 
@@ -327,12 +329,16 @@ ${error}
 
                             <h4 style="color:#f56d1f;">Autres Documents</h4>
                             <p> 
+                               -&nbsp;&nbsp;<a href="doc-dgp/organisation sonatrach.pdf" target="_blank" >Organisation Sonatrach </a><br>
                                -&nbsp;&nbsp;<a href="doc-dgp/DECISION N 2 PORTANT ORGANISATION DE DETAIL DE l'iap.pdf" target="_blank" >Organisation de l'IAP</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Politique Qualité IAP.pdf" target="_blank" >Politique Qualité IAP</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Annuaire Téléphonique IAP-Boumerdes.pdf" target="_blank" >Annuaire IAP Boumerdes</a><br>
                                -&nbsp;&nbsp;<a href="" target="_blank" >Historique de l’IAP</a><br>
-                               -&nbsp;&nbsp;<a href="" target="_blank" >Catalogues de formation</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Catalogue IAP 2022.pdf" target="_blank" >Catalogue de Formation IAP</a><br>
+                               -&nbsp;&nbsp;<a href="doc-dgp/Catalogue SMA Management.pdf" target="_blank" >Catalogue de Formation SMA</a><br>
                                -&nbsp;&nbsp;<a href="" target="_blank" title="En Production" >Plan de Développement de la DGP<br></a><br>
-
-                                         
+                               
+                                       
                             </p>
                         </div>
                     </div>
@@ -348,12 +354,24 @@ ${error}
 
                         <div class="service-desc">
                           
-                            <h4 style="color:#f56d1f;">Avantages Sociaux</h4>
-                            <p>
-                               -&nbsp;&nbsp;<a href=""  > Duppléant Numérique en Arabe</a><br>
-                               -&nbsp;&nbsp;<a href="" > Duppléant Numérique en Français</a><br>
-                              
-                            </p>
+                            <h4 style="color:#f56d1f; text-decoration: underline;" data-toggle="modal" data-target="#Modal2"> Avantages Sociaux</h4>
+                           
+                        </div>
+                    </div>
+                </div>
+                <!-- end service item -->
+                <br><br><br>
+                <!-- service item -->
+                <div class="col-md-4 wow fadeInRight" data-wow-duration="500ms" data-wow-delay="900ms">
+                    <div class="service-item">
+                        <div class="service-icon">
+                            <i class="fa fa-bullhorn fa-2x"></i>
+                        </div>
+
+                        <div class="service-desc">
+                          
+                            
+                            <h4 style="color:#f56d1f; text-decoration: underline;" ><a style="color:#f56d1f;" href="http://172.21.1.49/" target="_blank">Suivi des Requêtes Administratives</a> </h4>
                         </div>
                     </div>
                 </div>
@@ -362,6 +380,64 @@ ${error}
             </div>
         </div>
     </section>
+
+<!--------------Modal------------------->
+
+<div class="modal fade" id="Modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style=" width: 700px;">
+   <div class="modal-content">
+    <div class="modal-header" style="background-color: orange;">
+     <button type="button" class="close" data-dismiss="modal">&times;</button>
+       <h3 class="modal-title" style="color: #6A737B;">Avantages Sociaux </h3>  
+        
+      </div>
+      <div class="modal-body">
+        <div class="wrapper">
+    
+           <h4 style="color:#f56d1f;">CNAS</h4>
+                            <p> 
+                                &nbsp;&nbsp;<a href="doc-cnas/Guide des Affaires Sociales.pdf" target="_blank"  style="color: #6A737B; ">Guide des Affaires Sociales</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/accident de travail et maladie.pdf" target="_blank"  style="color: #6A737B; ">Accident de Travail et Maladie</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/adhésion volontaire à la sécurité sociale.pdf" target="_blank" style="color: #6A737B;">Adhésion Volontaire à la Sécurité Sociale</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/allocation familliale.pdf" target="_blank" style="color: #6A737B;">Allocation Familliale</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/assurance décès.pdf" target="_blank" style="color: #6A737B;" >Assurance Décès<br></a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/Assurance Invalidité.pdf" target="_blank"style="color: #6A737B;" >Assurance Invalidité</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/Assurance Maladie.pdf" target="_blank" style="color: #6A737B;" >Assurance Maladie</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/Assurance Maternité.pdf" target="_blank" style="color: #6A737B;" >Assurance Maternité</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/aventage recrutement anem.pdf" target="_blank" style="color: #6A737B;"  >Aventage Recrutement Anem<br></a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/cnas non paiement de cotisation.pdf" target="_blank" style="color: #6A737B;"  >Cnas Non Paiement de Cotisation</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/cnas transport Sanitaire.pdf" target="_blank" style="color: #6A737B;" >Cnas Transport Sanitaire </a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/convention algéro-tunisienne.pdf" target="_blank" style="color: #6A737B;" >Convention Algéro-Tunisienne</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/convention CNAS cliniques CHIRURGIE CARDIAQUE .pdf" target="_blank" style="color: #6A737B;" >Convention CNAS Cliniques CHIRURGIE CARDIAQUE <br></a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/Convention CNAS Opticiens.pdf" target="_blank" style="color: #6A737B;" >Convention CNAS Opticiens</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/droit de l'Etudiant à la sécurité sociale.pdf" target="_blank" style="color: #6A737B;" >Droit de l'Etudiant à la Sécurité Sociale</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/hemodialyse-fr-ara-finale1.pdf" target="_blank" style="color: #6A737B;"  >Hemodialyse-fr-ar</a><br> 
+                               &nbsp;&nbsp;<a href="doc-cnas/La carte Chifa.pdf" target="_blank" style="color: #6A737B;" >La Carte Chifa</a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/maladie professionnelle Arabe .pdf" target="_blank"  style="color: #6A737B;"  >Maladie Professionnelle Arabe  <br></a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/Operation depistage precoce di cancer du sein.pdf" target="_blank" style="color: #6A737B;" >OPERATION DEPISTAGE PRECOCE DU CANCER DU SEIN </a><br>
+                               &nbsp;&nbsp;<a href="doc-cnas/risques et maladie professionnelles.pdf" target="_blank" style="color: #6A737B;" >Risques et Maladie Professionnelles</a><br>         
+                            </p>
+                        <br>
+
+                            <!--   <h4 style="color:#f56d1f;">INSPECTION DU TRAVAIL</h4>
+                            <p> 
+                               &nbsp;&nbsp;<a href="doc-inspect/Conflits Individuels de Travail.pdf" target="_blank" style="color: #6A737B;" >Conflits Individuels de Travail</a><br>
+                               &nbsp;&nbsp;<a href="doc-inspect/INSPECTION DU TRAVAIL.pdf" target="_blank" style="color: #6A737B;" >INSPECTION DU TRAVAIL</a><br>
+                               &nbsp;&nbsp;<a href="doc-inspect/la durée legale du travail.pdf" target="_blank" style="color: #6A737B;" >LA DUREE LEGALE DU TRAVAIL</a><br>
+                               </p>
+                         <br>-->
+                               
+                               <h4 style="color:#f56d1f;">MIP</h4>
+                            <p> 
+                               &nbsp;&nbsp;<a href="doc-mip/guide mituelle.pdf" target="_blank" style="color: #6A737B;" >Guide Mutuelle</a><br></p>
+                               &nbsp;&nbsp;<a href="doc-mip/GUIDE MIP.pdf" target="_blank" style="color: #6A737B;" >Guide MIP</a><br></p>
+                               <br><br>
+    
+</div>
+      </div>
+
+    </div>
+  </div>
 
     <!--
         End Features
@@ -641,9 +717,9 @@ ${error}
                     <div class="footer-single">
                         <h6>Contactez-nous </h6>
                         <ul>
-                            <li>Chef du Départemnt ADM :5011</li>
-                            <li>Chef du Département Développement du personnel :3498 </li>
-                            <li>CHef Service Paie :5059 </li>
+                            <li>Chef du Départemnt ADM : 6196 / 5011</li>
+                            <li>Chef Service Gestion : 6197 / 5031 </li>
+                            <li>Chef Service Paie : 6102 / 5059 </li>
 
 
                         </ul>

@@ -24,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/page_accueil/adminP.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/adminP.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/page_accueil/locomotive.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
@@ -46,7 +46,7 @@
     <nav>
         <div class="logo">
             <a href="accueil">
-                <img src="${pageContext.request.contextPath}/page_accueil/Layer0.png" class="navlogo">
+                <img src="${pageContext.request.contextPath}/assets/img2/logo-iap.png" class="navlogo">
             </a>
         </div>
 
@@ -56,7 +56,7 @@
 
         <div class="menu">
             <h3>
-                ${user} Account
+                ${user} Compte
                 <div>
                     ${Fonction}
                 </div>
@@ -69,7 +69,7 @@
 
                 <li>
                     <span class="material-icons icons-size">lock</span>
-                    <a href="Logout">Déconnexion</a>
+                    <a href="Logout">D&eacute;connexion</a>
                 </li>
 
             </ul>
@@ -98,21 +98,21 @@
                         <%
                             if (session.getAttribute("admin").equals("SuperAdmin")){
                                 out.print("\n" +
-                                        "<button type='button4' onclick=\"window.location.href='PrintUSER';\">USER</button>\n" +
-                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">STR table</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">LOC table</button>\n" +
-                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">PERS table</button>\n" +
-                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">RUB table</button>");
+                                        "<button type='button4' onclick=\"window.location.href='PrintUSER';\">Table des Utilisateurs</button>\n" +
+                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
+                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
+                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">Table Personnel</button>\n" +
+                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">Table Rubrique</button>");
 
                             }else if(session.getAttribute("admin").equals("AdminPaie")) {
                                 out.print("\n" +
-                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">STR table</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">LOC table</button>\n" +
-                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">RUB table</button>");
+                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
+                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
+                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">Table Rubrique</button>");
                             }else if (session.getAttribute("admin").equals("AdminPers")){
-                                out.print("<button type='button1' onclick=\"window.location.href='PrintSTR';\">STR table</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">LOC table</button>\n" +
-                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">PERS table</button>");
+                                out.print("<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
+                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
+                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">Table Personnel</button>");
                             }
                         %>
                     </div>

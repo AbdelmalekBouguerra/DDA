@@ -1,125 +1,247 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%
-  response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // for HTTP 1.1
+<!DOCTYPE html>
+<html lang="fr">
 
-  response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+<head>
+   
+    <meta charset="utf-8">
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    
+    <!-- Page Title -->
+    <link rel="shortcut icon" type="image/png" href="assets/img2/Layer 2.png">
+    <title> DOC IAP SONATRACH</title>
+    <!-- Meta Description -->
+    <meta name="description" content="Blue One Page Creative HTML5 Template">
+    <meta name="keywords" content="one page, single page, onepage, responsive, parallax, creative, business, html5, css3, css3 animation">
 
-  response.setHeader("Expires", "0"); // Proxies
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Font -->
+    <link href="css/font.css" rel="stylesheet">
+    <link href="css/font1.css" rel="stylesheet">
+    <!-- CSS-->
+    <!-- Fontawesome Icon font -->
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/all.css">
+    <!-- Twitter Bootstrap css -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!--jquery.fancybox  -->
+    <!-- animate -->
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="assets/css/tabtry.css">
+    <script src="assets/js/jquery-1.7.2.min.js"></script>
+    <script src="assets/js/jquery.dynatable.js"></script>
+   <!-- <script src="assets/js/tabdoc.js"></script>-->
+    <link rel="stylesheet" href="assets/css/jquery.dynatable.css">
+
+</head>
 
 
-  if (session.getAttribute("username") == null) {
-    response.sendRedirect("index.jsp");
-  }
+<body id="body">
 
-  if (session.getAttribute("admin") == null) {
-    response.sendRedirect("index.jsp");
-  }
-%>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <!-- preloader -->
+    <div id="preloader">
+        <img src="assets/img2/sona-load.gif" alt="Preloader">
+    </div>
+    <!-- end preloader -->
 
-    <script src="jquery-dynatable-master/vendor/jquery-1.7.2.min.js"></script>
-    <script src="jquery-dynatable-master/jquery.dynatable.js"></script>
-    <link
-      rel="stylesheet"
-      href="jquery-dynatable-master/jquery.dynatable.css"
-    />
+    <!-- 
+        Fixed Navigation
+        ==================================== -->
+    <header id="navigation" class="navbar-fixed-top navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <!-- responsive nav button -->
 
-    <style>
-      table,
-      th,
-      td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
+                <!-- /responsive nav button -->
+                <!-- logo -->
+                <a class="navbar-brand" href="#body">
+                    <h1 id="logo">
+                        <img class="g" src="assets/img2/logo-iap.png">
+                    </h1>
+                </a>
+                <!-- /logo -->
+            </div>
 
-      th,
-      td {
-        padding: 5px;
-        text-align: left;
-      }
-    </style>
-    <title>INSTITUT ALGERIEN DU PETROLE</title>
-  </head>
+            <nav>
+                <div class="profile" onclick="menuToggle();">
+                    <img src="${pageContext.request.contextPath}/assets/img2/male_user_65px.png" alt="">
+                </div>
 
-  <body>
+                <div class="menu">
+                    <h3>
+                      Compte:  ${name} ${user} 
+                        <div>
+                            ${Fonction}
+                        </div>
+                    </h3>
 
-  ${msg}
 
-    <h3>Téléchargez  un document</h3>
-    Sélectionnez le document a télécharger: <br />
-    <!-- HTML5 Input Form Elements -->
-    <input id="ajaxfile" type="file" /> <br />
-    <button onclick="uploadFile()">Télécharger</button>
+                    <ul>
 
-    <!-- Ajax to Java File Upload Logic -->
-  <!-- end preloader -->
+                        ${admin}
+
+                        <li>
+                            <span class="material-icons icons-size">lock</span>
+                            <a href="Logout">D&eacute;connexion</a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+                <script>
+                    function menuToggle() {
+                        const toggleMenu = document.querySelector('.menu');
+                        toggleMenu.classList.toggle('active')
+                    }
+                </script>
+            </nav>
+
+
+        </div>
+    </header>
+
+    <!-- =========================================Home Slider ==================================== -->
+
+    <section id="slider">
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+
+
+
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner" role="listbox">
+
+                <!-- single slide -->
+                <div class="item active" style="background-color:rgb(243, 243, 243);">
+
+
+                    <input id="ajaxfile" type="file" accept=".xls, .xlsx" /> <br/>
+                    <button onclick="uploadFile()"> T&eacute;l&eacute;charger</button>
+                    <br />
+
+
+                    <script>
+                        async function uploadFile() {
+                            let formData = new FormData();
+                            formData.append("file", ajaxfile.files[0]);
+                            await fetch("persupload", {
+                                method: "POST",
+                                body: formData,
+                            });
+                            window.location.reload();
+                        }
+                    </script>
+                     <script>
+                        $(document).ready(function() {
+                            $("#my-ajax-table").dynatable({
+                                features: {
+                                    paginate: true,
+                                    //search: true,
+                                    recordCount: false,
+                                },
+                                inputs: {
+                                    perPageText: "Afficher: ",
+                                    //searchText: "Rechercher: ",
+                                    
+                                    paginationPrev: "Pr&eacute;cedent",
+                                    paginationNext: "Suivant",
+                                    
+                                    recordCountPageBoundTemplate: "{pageLowerBound} de {pageUpperBound} à",
+                                },
+                                dataset: {
+                                    records: [
+                                        ${PERS_Table}
+                                       
+                                    ],
+                                },
+                            });
+                        });
+                    </script>
+                    <br> <br>
+                   
+                    <table id="my-ajax-table">
+                        <thead>
+                            <th>Matricule</th>
+                            <th>Nom</th>
+                            
+                            <th>CodeLieuNais</th>
+                            <th>DateNais</th>
+                            <th>SEXE</th>
+                            <th>DateRec</th>
+                            <th>Fonction</th>
+                            <th>Adresse</th>
+                            <th>GSang</th>
+                            <th>SF</th>
+                            <th>SCJT</th>
+                            <th>NbrEnfS10</th>
+                            <th>NbrEnfM10</th>
+                            <th>RIB</th>
+                           <!-- <th>NSSAGT</th>
+                            <th>NSSEMP</th>
+                            <th>CPAIEM</th>-->
+                            <th>Echelle</th>
+                            <th>Groupe</th>
+                            <th>SalBase</th>
+                            <th>IAG</th>
+                        </thead>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- End Wrapper for slides -->
+
+        </div>
+    </section>
+
+
+
+    <!-- Essential jQuery Plugins
+		================================================== -->
+    <!-- Main jQuery -->
+
+    <!-- Single Page Nav -->
+    <script src="assets/js/jquery.singlePageNav.min.js "></script>
+    <!-- Twitter Bootstrap -->
+    <script src="assets/js/bootstrap.min.js "></script>
+    <!-- jquery.fancybox.pack -->
+    <script src="assets/js/jquery.fancybox.pack.js "></script>
+    <!-- jquery.mixitup.min -->
+    <script src="assets/js/jquery.mixitup.min.js "></script>
+    <!-- jquery.parallax -->
+    <script src="assets/js/jquery.parallax-1.1.3.js "></script>
+    <!-- jquery.countTo -->
+    <script src="assets/js/jquery-countTo.js "></script>
+    <!-- jquery.appear -->
+    <script src="assets/js/jquery.appear.js "></script>
+    <!-- Contact form validation -->
+    <script src="js/jquery.form.js "></script>
+    <script src="js/jquery.validate.min.js "></script>
+    <!-- Google Map -->
+    <script type="text/javascript " src="js/maps.js"></script>
+    <!-- jquery easing -->
+    <script src="assets/js/jquery.easing.min.js "></script>
+    <!-- jquery easing -->
+    <script src="assets/js/wow.min.js "></script>
     <script>
-      async function uploadFile() {
-        let formData = new FormData();
-        formData.append("file", ajaxfile.files[0]);
-        await fetch("persupload", {
-          method: "POST",
-          body: formData,
+        var wow = new WOW({
+            boxClass: 'wow', // animated element css class (default is wow)
+            animateClass: 'animated', // animation css class (default is animated)
+            offset: 120, // distance to the element when triggering the animation (default is 0)
+            mobile: false, // trigger animations on mobile devices (default is true)
+            live: true // act on asynchronously loaded content (default is true)
         });
-        window.location.reload();
-      }
+        wow.init();
     </script>
-    <script>
-      $(document).ready(function () {
-        $("#my-ajax-table").dynatable({
-          features: {
-            paginate: true,
-            search: true,
-            recordCount: true,
-          },
-          inputs: {
-            perPageText: "Afficher: ",
-            searchText: "Rechercher: ",
-            paginationPrev: "Précédent",
-            paginationNext: "Suivant",
-            recordCountText: "Affichage",
-            recordCountPageBoundTemplate:
-              "{pageLowerBound} de {pageUpperBound} à",
-          },
-          dataset: {
-            records: [
-              ${PERS_Table}
-            ],
-          },
-        });
-      });
-    </script>
-    <table id="my-ajax-table">
-      <thead>
-        <th>Matricule</th>
-        <th>Nom</th>
-        <th>STR</th>
-        <th>CodeLieuNais</th>
-        <th>DateNais</th>
-        <th>SEXE</th>
-        <th>DateRec</th>
-        <th>Fonction</th>
-        <th>Adresse</th>
-        <th>GSang</th>
-        <th>SF</th>
-        <th>SCJT</th>
-        <th>NbrEnfS10</th>
-        <th>NbrEnfM10</th>
-        <th>RIB</th>
-        <th>NSSAGT</th>
-        <th>NSSEMP</th>
-        <th>CPAIEM</th>
-        <th>Echelle</th>
-        <th>Groupe</th>
-        <th>SalBase</th>
-        <th>IAG</th>
+    <!-- Custom Functions -->
+    <script src="assets/js/custom.js "></script>
+    <script src="assets/js/typed.js "></script>
+    <script src="assets/js/click.js "></script>
 
-      </thead>
-      <tbody></tbody>
-    </table>
-  </body>
+</body>
+
 </html>

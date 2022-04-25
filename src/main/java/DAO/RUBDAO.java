@@ -106,7 +106,7 @@ public class RUBDAO {
                 infoList.put("datedeb" + i, resultSet.getString("datedeb"));
                 infoList.put("datefin" + i, resultSet.getString("datefin"));
                 infoList.put("montantmois" + i, String.valueOf(resultSet.getBigDecimal("montantmois")));
-                infoList.put("taux" + i, String.valueOf(resultSet.getInt("taux")));
+                infoList.put("taux" + i, String.valueOf(resultSet.getFloat("taux")));
                 infoList.put("base" + i, String.valueOf(resultSet.getFloat("base")));
                 System.out.println(i + ". matricule :" + resultSet.getString("matricule") + " added");
                 i++;
@@ -361,6 +361,7 @@ public class RUBDAO {
         return infoList;
 
     }
+
     public void setRUBXLS(String file, String year, String month) {
         String date = month + "/" + year;
         String yearRub = "";
@@ -435,6 +436,7 @@ public class RUBDAO {
                     MT_MOIS = new BigDecimal(infoList.get("montantmois" + i));
                     pStatement.setBigDecimal(7, MT_MOIS);
                     taux = new BigDecimal(infoList.get("taux" + i));
+                    System.out.println("taux : "+taux);
                     pStatement.setBigDecimal(8, taux);
                     ELEM_STAT = new BigDecimal(infoList.get("base" + i));
                     pStatement.setBigDecimal(9, ELEM_STAT);
