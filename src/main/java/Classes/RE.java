@@ -80,11 +80,12 @@ public class RE {
             // reading from DB.
             int i = 0;
             while (resultSet.next()) {
-                String[] dataRow = new String[4];
+                String[] dataRow = new String[5];
                 dataRow[0] = resultSet.getString("NumRub");
                 dataRow[1] = String.valueOf(resultSet.getBigDecimal("MontantMois"));
                 dataRow[2] = String.valueOf(resultSet.getBigDecimal("Taux"));
                 dataRow[3] = String.valueOf(resultSet.getBigDecimal("Base"));
+                dataRow[4] = (String.valueOf(resultSet.getString("datedeb")).equals("null")) ? "notRapel" : "Rapel";
                 data[i] = dataRow;
                 i++;
             }
@@ -283,15 +284,15 @@ public class RE {
                 4BE - RET. PRET ABC BANQUE AU PROFIT PERS T.R.C
                 408 - RET. ACHAT VEHICULE
              */
-            if (data[j][0].equals("448")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("446")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("486")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("430")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("412")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("4BR")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("4BE")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("408")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("300")) {
+            if (data[j][0].equals("448") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("446") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("486") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("430") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("412") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("4BR") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("4BE") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("408") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("300") && data[j][4].equals("notRapel")) {
                 AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
                         + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
                 AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
