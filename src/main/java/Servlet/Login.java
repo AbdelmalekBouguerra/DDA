@@ -24,7 +24,7 @@ public class Login extends HttpServlet {
         String pass = request.getParameter("pass");
         LoginDAO loginDAO = new LoginDAO();
         LDAP ldap = new LDAP();
-        if (ldap.connect(uname, pass)) {
+//        if (ldap.connect(uname, pass)) {
             if (loginDAO.check(uname)) {
                 HttpSession session = request.getSession();
                 session.setAttribute("username", loginDAO.getMat(uname));
@@ -40,14 +40,14 @@ public class Login extends HttpServlet {
                 request.setAttribute("invalidPass", "cord incorrect");
                 request.getRequestDispatcher("index.jsp").forward(request, response);
             }
-       } else {
-            uname = "value=\"" + uname + '"';
-            pass = "value=\"" + pass + '"';
-            request.setAttribute("uname", uname);
-            request.setAttribute("pass", pass);
-            request.setAttribute("invalidUname", "error connection LDAP");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
-        }
+//       } else {
+//            uname = "value=\"" + uname + '"';
+//            pass = "value=\"" + pass + '"';
+//            request.setAttribute("uname", uname);
+//            request.setAttribute("pass", pass);
+//            request.setAttribute("invalidUname", "error connection LDAP");
+//            request.getRequestDispatcher("index.jsp").forward(request, response);
+//        }
     }
 }
 

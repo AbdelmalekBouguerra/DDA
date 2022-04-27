@@ -24,6 +24,9 @@
 %>
 <html>
 <head>
+    <link rel="stylesheet" href="assets/notiflix/dist/notiflix-3.2.5.min.css"/>
+<%--    <style><%@include file="/assets/notiflix/dist/notiflix-3.2.5.min.css"%></style>--%>
+
     <style>
         table, th, td {
             border: 1px solid black;
@@ -150,8 +153,13 @@ ${msg}
 
 <!-- Ajax to Java File Upload Logic -->
 <!-- preloader -->
+<script src="assets/notiflix/dist/notiflix-3.2.5.min.js"></script>
 <script>
     async function uploadFile() {
+        Notiflix.Loading.dots({
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            svgColor: '#c68b32',
+        });
         let formData = new FormData();
         formData.append("file", ajaxfile.files[0]);
         await fetch('rubupload', {
@@ -178,6 +186,7 @@ ${msg}
     </tr>
         ${RUB_Table}
 </table>
+
 
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="fr">
 
 <head>
-   
+
     <meta charset="utf-8">
     <!-- Always force latest IE rendering engine or request Chrome Frame -->
     
@@ -33,6 +33,8 @@
     <script src="assets/js/jquery.dynatable.js"></script>
    <!-- <script src="assets/js/tabdoc.js"></script>-->
     <link rel="stylesheet" href="assets/css/jquery.dynatable.css">
+    <!-- notiflix -->
+    <link rel="stylesheet" href="assets/notiflix/dist/notiflix-3.2.5.min.css"/>
 
 </head>
 
@@ -120,9 +122,13 @@
                     <button onclick="uploadFile()"> T&eacute;l&eacute;charger</button>
                     <br />
 
-
+                    <script src="assets/notiflix/dist/notiflix-3.2.5.min.js"></script>
                     <script>
                         async function uploadFile() {
+                            Notiflix.Loading.dots({
+                                backgroundColor: 'rgba(0,0,0,0.8)',
+                                svgColor: '#c68b32',
+                            });
                             let formData = new FormData();
                             formData.append("file", ajaxfile.files[0]);
                             await fetch("persupload", {
