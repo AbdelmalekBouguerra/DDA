@@ -118,25 +118,45 @@
                 <div class="item active" style="background-color:rgb(243, 243, 243);">
 
 
-                    <input id="ajaxfile" type="file" accept=".xls, .xlsx" /> <br/>
+                    <input id="ajaxfile" type="file" accept=".xls, .xlsx" required/> <br/>
                     <button onclick="uploadFile()"> T&eacute;l&eacute;charger</button>
                     <br />
 
                     <script src="assets/notiflix/dist/notiflix-3.2.5.min.js"></script>
                     <script>
-                        async function uploadFile() {
-                            Notiflix.Loading.dots({
-                                backgroundColor: 'rgba(0,0,0,0.8)',
-                                svgColor: '#c68b32',
-                            });
-                            let formData = new FormData();
-                            formData.append("file", ajaxfile.files[0]);
-                            await fetch("persupload", {
-                                method: "POST",
-                                body: formData,
-                            });
-                            window.location.reload();
-                        }
+                            async function uploadFile() {
+                                Notiflix.Loading.dots({
+                                    backgroundColor: 'rgba(0,0,0,0.8)',
+                                    svgColor: '#c68b32',
+                                });
+                                let formData = new FormData();
+                                formData.append("file", ajaxfile.files[0]);
+                                    await fetch("persupload", {
+                                        method: "POST",
+                                        body: formData,
+                                    })
+                            .then(async response => {
+                                    const isJson = response.headers.get('content-type')?.includes('application/json');
+                                    const data = isJson ? await response.json() : null;
+
+                                    // check for error response
+                                    if (!response.ok) {
+                                        // get error message from body or default to response status
+                                        const error = (data && data.message) || response.status;
+                                        Notiflix.Report.failure(
+                                            'Error',
+                                            'Veuillez verifier si vous avez selectionne le bon fichier ou si le fichier ne contient pas de cases vides',
+                                            'D\'accord',
+                                            function cb() {
+                                                window.location.reload();
+                                            },
+                                        );
+                                        return Promise.reject(error);
+                                    } else {
+                                        window.location.reload();
+                                    }
+                                })
+                            }
                     </script>
                      <script>
                         $(document).ready(function() {

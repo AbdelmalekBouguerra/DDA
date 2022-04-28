@@ -362,7 +362,8 @@ public class RUBDAO {
 
     }
 
-    public void setRUBXLS(String file, String year, String month) {
+    public void setRUBXLS(String file, String year, String month) throws IOException {
+        LinkedHashMap<String, String> infoList = readXLSRUB(file);
         String date = month + "/" + year;
         String yearRub = "";
         String yearEff = "";
@@ -395,8 +396,7 @@ public class RUBDAO {
                 pStatement.executeUpdate();
                 pStatement.close();
             }
-            LinkedHashMap<String, String> infoList = new LinkedHashMap<>();
-            infoList = readXLSRUB(file);
+
 
             //if it makes error use CODE_NATUR to determine if it has a "rappel" or not .
             for (int i = 0; i <= infoList.size(); i++) {
@@ -450,7 +450,7 @@ public class RUBDAO {
             }
             connection.close();
 
-        } catch (SQLException | IOException | ClassNotFoundException throwables) {
+        } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
         }
     }

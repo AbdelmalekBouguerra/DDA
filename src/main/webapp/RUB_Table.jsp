@@ -165,8 +165,28 @@ ${msg}
         await fetch('rubupload', {
             method: "POST",
             body: formData,
-        });
-        window.location.reload();
+        })
+    .then(async response => {
+            const isJson = response.headers.get('content-type')?.includes('application/json');
+            const data = isJson ? await response.json() : null;
+
+            // check for error response
+            if (!response.ok) {
+                // get error message from body or default to response status
+                const error = (data && data.message) || response.status;
+                Notiflix.Report.failure(
+                    'Error',
+                    'Veuillez verifier si vous avez selectionne le bon fichier ou si le fichier ne contient pas de cases vides',
+                    'D\'accord',
+                    function cb() {
+                        window.location.reload();
+                    },
+                );
+                return Promise.reject(error);
+            } else {
+                window.location.reload();
+            }
+        })
     }
 </script>
 </script>

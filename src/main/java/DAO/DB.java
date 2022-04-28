@@ -11,12 +11,12 @@ package DAO;
 public class DB {
     // url connection to db
     public static String dbName = "pfe";
-    public static String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
-//public static String url = "jdbc:mysql://172.21.99.45:3306/" + dbName;
+//    public static String url = "jdbc:mysql://127.0.0.1:3306/" + dbName;
+public static String url = "jdbc:mysql://172.21.99.45:3306/" + dbName;
     // root server account
-    public static String username = "root";
-//    public static String username = "dgp_user";
-    public static String password = "";
-//    public static String password = "dgp_password";
+//    public static String username = "root";
+    public static String username = "dgp_user";
+//    public static String password = "";
+    public static String password = "dgp_password";
 
 }

@@ -420,8 +420,9 @@ public class PERSDAO {
 
     }
 
-    public void setPERSXLS(String file, String year, String month) {
+    public void setPERSXLS(String file, String year, String month) throws IOException {
 
+        LinkedHashMap<String ,String> infoList = readXLSPERS(file,"MAT");
         String date = month + "/" + year;
         try {
             String creat = "CREATE TABLE pers_" + year + "(" +
@@ -481,13 +482,10 @@ public class PERSDAO {
                 pStatement.executeUpdate();
                 pStatement.close();
             }
-            LinkedHashMap<String ,String> infoList = new LinkedHashMap<>();
-             infoList = readXLSPERS(file,"MAT");
+
 
             for (int i = 0; i <=infoList.size(); i++) {
                 if (!(infoList.get("matricule"+i) == null)) {
-//                    connection = DriverManager.getConnection(url, username, password);
-//                    Class.forName("com.mysql.cj.jdbc.Driver");
                     pStatement = connection.prepareStatement(add);
                     pStatement.setString(1, infoList.get("matricule" + i));
                     pStatement.setString(2, infoList.get("nom" + i));
@@ -495,9 +493,6 @@ public class PERSDAO {
                     pStatement.setString(4, infoList.get("loctrav"+i));
                     pStatement.setString(5, infoList.get("datenais"+i));
                     pStatement.setString(6, infoList.get("codelieunais" + i));
-
-
-
                     pStatement.setString(7, infoList.get("sexe" + i));
                     pStatement.setString(8,  infoList.get("fonction" + i));
                     pStatement.setString(9, infoList.get("daterec" + i));
@@ -516,6 +511,7 @@ public class PERSDAO {
                     BigDecimal IAG = BigDecimal.valueOf(Double.parseDouble(infoList.get("iag"+i)));
                     pStatement.setBigDecimal(20, IAG);
                     pStatement.setBigDecimal(21, SALBASE);
+
                     pStatement.setString(22,date);
                     pStatement.setString(23,infoList.get("groupe" + i));
                     pStatement.setString(24,infoList.get("echelle" + i));
@@ -529,10 +525,8 @@ public class PERSDAO {
             }
             connection.close();
 
-        } catch (SQLException | FileNotFoundException | ClassNotFoundException throwables) {
+        } catch (SQLException | ClassNotFoundException throwables) {
             throwables.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
