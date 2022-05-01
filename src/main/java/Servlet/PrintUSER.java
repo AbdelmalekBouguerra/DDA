@@ -30,11 +30,15 @@ public class PrintUSER extends HttpServlet {
             }
             USER.append("<td>").append(entry.getValue()).append("</td>\n");
             if (i == 3) {
-                USER.append("<td>").append("<button name=\"id\" id='modif' onclick='showValue(this);' data-toggle=\"modal\" data-target=\"#exampleModal\" value=\"").append(id).
-                        append("\" type=\"submit\">Modifier</button>").append("</td>\n");
+                USER.append("<td>").append("<button name=\"id\" id='modif' onclick='showValue(this);'" +
+                                " data-toggle=\"modal\" data-target=\"#exampleModal\" value=\"").append(id).
+                        append("\" type=\"submit\">Modifier</button> <form id=\"form\" method=\"get\"" +
+                                " action=\"EditAdmin\"><input type=\"hidden\" name = \"SonInput\" value=\"").append(id)
+                        .append("\">" + "<input name =\"role\" type=\"hidden\" value=\"user\">"+
+                                "<button type = \"submit\">Supprimer</button></form>").append("</td>\n");
                 USER.append("</tr>\n");
                 i = 1;
-            }else {
+            } else {
                 i++;
             }
         }
