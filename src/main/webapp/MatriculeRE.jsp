@@ -43,7 +43,7 @@
 
 					<span class="login100-form-title">
 
-                        Recherche de bulletin de paie par matricule:
+                        Recherche de relevé des émoluments par matricule:
 
 					</span>
 

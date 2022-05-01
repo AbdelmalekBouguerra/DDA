@@ -35,7 +35,7 @@
                    
 					<span class="login100-form-title">
                         
-						Demande de Cr&eacute;ation du Relev&eacute; Des Emoluments D&eacute;taill&eacute; par matricule
+						Recherche de relevé des émoluments D&eacute;taill&eacute; par matricule
 					</span> 
 
 					<div class="wrap-input100 validate-input">
