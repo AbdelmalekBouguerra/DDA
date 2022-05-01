@@ -9,6 +9,8 @@
 package DAO;
 
 import Classes.DATE;
+import Classes.Printer;
+
 import static DAO.DB.*;
 import java.sql.*;
 import java.util.HashMap;
@@ -76,5 +78,26 @@ public class REFDAO {
         return infoList[0];
     }
 
+    // stand-alone function
+    public static String getCode(String matricule){
+
+        PERSDAO persdao = new PERSDAO();
+        REFDAO refdao = new REFDAO();
+
+        //TODO : transform every function to one fun in DATE CLASS
+        String month,lastyear;
+        if (DATE.GetMonthNum().equals("01")){
+            month = "12";
+            lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
+        } else {
+            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
+            lastyear =  DATE.GetYear();
+        }
+
+        Map<String, String> infoList = persdao.getPERS(matricule,lastyear,month);
+        Map<String, String> refList =
+                refdao.getREF(infoList.get("str"), Printer.splitWillaya(infoList.get("loctrav")));
+        return refList.get("code");
+    }
 
 }

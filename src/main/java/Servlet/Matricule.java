@@ -2,8 +2,10 @@ package Servlet;
 
 
 import Classes.DATE;
+import Classes.Printer;
 import DAO.LoginDAO;
 import DAO.PERSDAO;
+import DAO.REFDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 
 @WebServlet("/Matricule")
 public class Matricule extends HttpServlet {
@@ -33,7 +36,6 @@ public class Matricule extends HttpServlet {
             switch (type) {
                 case "ATmat":
                     request.getRequestDispatcher("AT").forward(request, response);
-                    System.out.println("am here in at");
                     break;
                 case "ATCmat":
                     request.getRequestDispatcher("dateCNAS.jsp").forward(request, response);
@@ -49,7 +51,6 @@ public class Matricule extends HttpServlet {
                     break;
             }
         } else {
-            System.out.println("entre else statement");
             request.setAttribute("invalidUname", "matricule incorrect");
             switch (type) {
                 case "ATmat":
@@ -69,6 +70,5 @@ public class Matricule extends HttpServlet {
                     break;
             }
         }
-        System.out.println("code end here");
     }
 }

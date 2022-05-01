@@ -105,15 +105,26 @@ public class LoginDAO {
                     Admin = "SuperAdmin";
                     System.out.println("user set to \"SuperAdmin\"");
                     break;
-                case "AdminPaie":
-                    Admin = "AdminPaie";
-                    System.out.println("user set to \"AdminPaie\"");
+                case "Admin_DGP":
+                    Admin = "Admin_DGP";
+                    System.out.println("user set to \"Admin_DGP\"");
                     break;
-                case "AdminPers":
-                    Admin = "AdminPers";
-                    System.out.println("user set to \"Admin\"");
+                case "Admin_EHM":
+                    Admin = "Admin_EHM";
+                    System.out.println("user set to \"Admin_EHM\"");
                     break;
-
+                case "Admin_EBM":
+                    Admin = "Admin_EBM";
+                    System.out.println("user set to \"Admin_EBM\"");
+                    break;
+                case "Admin_EAZ":
+                    Admin = "Admin_EAZ";
+                    System.out.println("user set to \"Admin_EAZ\"");
+                    break;
+                case "Admin_ESK":
+                    Admin = "Admin_ESK";
+                    System.out.println("user set to \"Admin_ESK\"");
+                    break;
                 case "user":
                     Admin = "user";
                     System.out.println("user set to \"user\"");
