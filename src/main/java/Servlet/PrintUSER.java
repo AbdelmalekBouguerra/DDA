@@ -21,14 +21,22 @@ public class PrintUSER extends HttpServlet {
         // displaying user table
         LinkedHashMap<String, String> infoList = userdao.getAllUsers();
         StringBuilder USER = new StringBuilder();
-        for (int j = 0; j < infoList.size(); j++) {
-            if (!(infoList.get("Matricule"+j) == null)) {
-                USER.append("\n{");
-                USER.append("\"matricule\" : \"").append(infoList.get("Matricule" + j)).append("\",\n");
-                USER.append("\"pass\" : \"").append(infoList.get("Pass" + j)).append("\",\n");
-                USER.append("\"admin\" : \"").append(infoList.get("Admin" + j)).append("\",\n");
-                USER.append("},\n");
-            }else break;
+        int i = 1;
+        String id = "";
+        for (Map.Entry<String, String> entry : infoList.entrySet()) {
+            if (i == 1) {
+                USER.append("<tr>\n");
+                id = entry.getValue();
+            }
+            USER.append("<td>").append(entry.getValue()).append("</td>\n");
+            if (i == 3) {
+                USER.append("<td>").append("<button name=\"id\" id='modif' onclick='showValue(this);' data-toggle=\"modal\" data-target=\"#exampleModal\" value=\"").append(id).
+                        append("\" type=\"submit\">Modifier</button>").append("</td>\n");
+                USER.append("</tr>\n");
+                i = 1;
+            }else {
+                i++;
+            }
         }
         request.setAttribute("USER_Table", USER.toString());
         request.getRequestDispatcher("USER_Table.jsp").forward(request, response);
