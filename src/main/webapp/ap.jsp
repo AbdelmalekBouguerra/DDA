@@ -11,8 +11,7 @@
         }
 
         if (session.getAttribute("admin").equals("SuperAdmin")
-        || session.getAttribute("admin").equals("AdminPaie")
-        || session.getAttribute("admin").equals("AdminPers")){
+        || session.getAttribute("admin").equals("Admin_DGP")){
 
         } else {
             response.sendRedirect("accueil.jsp");
@@ -96,24 +95,14 @@
                 <div class='row'>
                     <div class='col'>
                         <%
-                            if (session.getAttribute("admin").equals("SuperAdmin")){
+                            if (session.getAttribute("admin").equals("SuperAdmin"))
                                 out.print("\n" +
-                                        "<button type='button4' onclick=\"window.location.href='PrintUSER';\">Table des Utilisateurs</button>\n" +
-                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
-                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">Table Personnel</button>\n" +
-                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">Table Rubrique</button>");
-
-                            }else if(session.getAttribute("admin").equals("AdminPaie")) {
-                                out.print("\n" +
-                                        "<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
-                                        "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">Table Rubrique</button>");
-                            }else if (session.getAttribute("admin").equals("AdminPers")){
-                                out.print("<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
-                                        "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
-                                        "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">Table Personnel</button>");
-                            }
+                                        "<button type='button4' onclick=\"window.location.href='PrintUSER';\">Table des Utilisateurs</button>\n");
+                            out.print(
+                                    "<button type='button1' onclick=\"window.location.href='PrintSTR';\">Table des Structures</button>\n" +
+                                            "<button type='button2' onclick=\"window.location.href='PrintLOC';\">Table des Localit&eacute;s</button>\n" +
+                                            "<button type='button3' onclick=\"window.location.href='datePickerPERS.jsp';\">Table Personnel</button>\n" +
+                                            "<button type='button4' onclick=\"window.location.href='datePickerRUB.jsp';\">Table Rubrique</button>");
                         %>
                     </div>
                 </div>
