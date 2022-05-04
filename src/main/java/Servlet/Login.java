@@ -28,12 +28,17 @@ public class Login extends HttpServlet {
             if (loginDAO.check(uname)) {
                 HttpSession session = request.getSession();
                 String matricule = loginDAO.getMat(uname);
+                String role = loginDAO.isAdmin(uname);
                 session.setAttribute("username", matricule);
-                String code = (loginDAO.isAdmin(uname).equals("SuperAdmin") ? "SuperAdmin" : loginDAO.isAdmin(uname).substring(6));
+                String code;
+                if (loginDAO.isAdmin(uname).equals("SuperAdmin") || loginDAO.isAdmin(uname).equals("user"))
+                    code = role;
+                else
+                    code = role.substring(6);
                 session.setAttribute("code", code);
                 System.out.println("code :" + code);
                 System.out.println("matricule :" + matricule);
-                session.setAttribute("admin", loginDAO.isAdmin(uname));
+                session.setAttribute("admin", role);
                 request.getRequestDispatcher("accueil").forward(request, response);
 
             } else {
