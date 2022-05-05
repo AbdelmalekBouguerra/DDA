@@ -6,7 +6,7 @@
 
     <groupId>abdelmalek.bouguerra</groupId>
     <artifactId>DDA</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <name>DDA</name>
     <packaging>war</packaging>
     
@@ -53,18 +53,8 @@
         </dependency>
         <dependency>
             <groupId>e-iceblue</groupId>
-            <artifactId>spire.doc.free</artifactId>
-            <version>5.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>e-iceblue</groupId>
-            <artifactId>spire.barcode.free</artifactId>
-            <version>5.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>e-iceblue</groupId>
-            <artifactId>spire.pdf.free</artifactId>
-            <version>5.1.0</version>
+            <artifactId>spire.office.free</artifactId>
+            <version>5.3.1</version>
         </dependency>
         <dependency>
             <groupId>io.airbrake</groupId>
