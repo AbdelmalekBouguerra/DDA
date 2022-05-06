@@ -9,7 +9,7 @@
         <unpackNestedArchives>false</unpackNestedArchives>
       </options>
     </properties>
-    <root id="archive" name="DDA-1.0-SNAPSHOT.war">
+    <root id="archive" name="DDA-1.6.1.war">
       <element id="artifact" artifact-name="DDA:war exploded" />
     </root>
   </artifact>

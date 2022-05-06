@@ -6,7 +6,7 @@
 
     <groupId>abdelmalek.bouguerra</groupId>
     <artifactId>DDA</artifactId>
-    <version>1.6.1</version>
+    <version>1.6.2</version>
     <name>DDA</name>
     <packaging>war</packaging>
     

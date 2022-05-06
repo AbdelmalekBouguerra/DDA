@@ -34,6 +34,7 @@ import static DAO.DB.*;
 public class Printer {
 
     String MAT;
+
     public Printer(String MAT) {
         this.MAT = MAT;
     }
@@ -71,11 +72,11 @@ public class Printer {
         if (loc.length() == 3) {
             tmp = splitByNumber(loc, 1);
             assert tmp != null;
-            newloc = tmp[0]+"000";
+            newloc = tmp[0] + "000";
         } else if (loc.length() == 4) {
             tmp = splitByNumber(loc, 2);
             assert tmp != null;
-            newloc = tmp[0]+"00";
+            newloc = tmp[0] + "00";
         }
         System.out.println("new code :" + newloc + " loc : " + locdao.getLOC(newloc));
         return locdao.getLOC(newloc);
@@ -95,41 +96,41 @@ public class Printer {
 
     public static String reverseArray(String inputArray) {
         String[] RA = inputArray.split("-");
-        return RA[2]+"-"+RA[1]+"-"+RA[0];
+        return RA[2] + "-" + RA[1] + "-" + RA[0];
     }
 
-    public static int numberOfMonths(String Start,String End){
+    public static int numberOfMonths(String Start, String End) {
 
         String[] StartSplit = Start.split("-");
         String[] EndSplit = End.split("-");
-        int m1,y1,m2, y2;
+        int m1, y1, m2, y2;
         //2021-10-05
         m1 = Integer.parseInt(StartSplit[1]);
         m2 = Integer.parseInt(EndSplit[1]);
 
         y1 = Integer.parseInt(StartSplit[0]);
         y2 = Integer.parseInt(EndSplit[0]);
-        System.out.println(m1+" "+m2+" "+y1+" "+y2);
+        System.out.println(m1 + " " + m2 + " " + y1 + " " + y2);
 
-        if (y1 == y2){
-            return m2-m1+1;
-        }else{
-            return  ((12 - m1) + 1 + m2);
+        if (y1 == y2) {
+            return m2 - m1 + 1;
+        } else {
+            return ((12 - m1) + 1 + m2);
         }
     }
 
-    public static String printerRoot(){
+    public static String printerRoot() {
         String path = Printer.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String[] paths = path.split("/");
         for (String a : paths)
             System.out.println(a);
-        System.out.println("Path is : "+path);
+        System.out.println("Path is : " + path);
         System.out.println("--------------------------------");
         String root = "";
-        for (int i = 1; i < paths.length-2; i++) {
-            root += paths[i]+"\\";
+        for (int i = 1; i < paths.length - 2; i++) {
+            root += paths[i] + "\\";
         }
-        root = root.replaceAll("%20"," ");
+        root = root.replaceAll("%20", " ");
         return root;
     }
 
@@ -140,9 +141,9 @@ public class Printer {
             Connection connection = DriverManager.getConnection(url, username, password);
             System.out.println("Database connection established");
             PreparedStatement pStatement = connection.prepareStatement(check);
-            pStatement.setString(1,mat);
-            pStatement.setString(2,month);
-            pStatement.setString(3,year);
+            pStatement.setString(1, mat);
+            pStatement.setString(2, month);
+            pStatement.setString(3, year);
             ResultSet resultSet = pStatement.executeQuery();
             // if a record found return true
             System.out.println("Database Connection Terminated (Printer.isUserExist)");
@@ -158,9 +159,10 @@ public class Printer {
     }
 
 
-
-    /** getAlphanumeric function :
+    /**
+     * getAlphanumeric function :
      * find where alphanumeric is in the data matrix (numRub from rub table).
+     *
      * @param data data from rub table.
      * @return vector of index where alphanumeric rub is.
      */
@@ -186,23 +188,26 @@ public class Printer {
         return num;
     }
 
-    /** firstChar function:
+    /**
+     * firstChar function:
      * get the first char from a string.
+     *
      * @param str the input string.
      * @return one char string contain the first char from the input string.
      */
-    public static String firstChar(String str){
+    public static String firstChar(String str) {
         String[] splited = str.split("(?!^)");
         return splited[0];
     }
 
-    /** sortingRub function:
+    /**
+     * sortingRub function:
      * this function take rub data matrix and place the alphanumeric before the numeric like "4AT" before "406".
      *
      * @param data data from rub table.
      * @return the same data table but sorted.
      */
-    public static String[][] sortingRub(String[][] data){
+    public static String[][] sortingRub(String[][] data) {
         String fc = "";
         String[] save;
 
@@ -220,14 +225,14 @@ public class Printer {
             fc = firstChar(data[indexes[i]][0]);
             // search where the fc is in the data table
             for (int j = 0; j < data.length && data[j] != null; j++) {
-                if (firstChar(data[j][0]).equals(fc)){
+                if (firstChar(data[j][0]).equals(fc)) {
 
                     // save the alphanumeric row
                     save = data[indexes[i]];
 
                     // shift down and erase the alphanumeric row
-                    for (int k = indexes[i]; k > j-1; k--) {
-                        data[k] = data[k-1];
+                    for (int k = indexes[i]; k > j - 1; k--) {
+                        data[k] = data[k - 1];
                     }
 
                     // set the alphanumeric row in the position before all the numeric values.
@@ -246,18 +251,18 @@ public class Printer {
         String day = DATE.GetDayNum();
 
 
-        String month,lastyear;
-        if (DATE.GetMonthNum().equals("01")){
+        String month, lastyear;
+        if (DATE.GetMonthNum().equals("01")) {
             month = "12";
-            lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
+            lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
         } else {
-            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
-            lastyear =  DATE.GetYear();
+            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+            lastyear = DATE.GetYear();
         }
 
 
         // check file if exist or not
-        String filepath = printerRoot()+"RESULT\\AttestationDeTravail\\ATS" + MAT + "_" + day + "_" + DATE.GetMonthNum() +
+        String filepath = printerRoot() + "RESULT\\AttestationDeTravail\\ATS" + MAT + "_" + day + "_" + DATE.GetMonthNum() +
                 "_" + year;
         File tmpDir = new File(filepath + ".pdf");
 
@@ -277,7 +282,7 @@ public class Printer {
             //load the template file
             doc.loadFromFile("C:\\template\\AttestationDeTravail\\AttestationDeTravail.docx");
             // fetch data form DB
-            Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
+            Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
             // creation qr code.
             String QR_Code = "QR" + MAT + "_" + year + "_" + DATE.GetMonthNum() + ".png";
             String text = MAT + " " + infoList.get("nom") + " " + infoList.get("fonction");
@@ -286,8 +291,8 @@ public class Printer {
             // set ref
             REFDAO refdao = new REFDAO();
             Map<String, String> refList =
-                    refdao.getREF(infoList.get("str"),splitWillaya(infoList.get("loctrav")));
-            int ref = refdao.setREFdoc(refList.get("code"),"refAT");
+                    refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
+            int ref = refdao.setREFdoc(refList.get("code"), "refAT");
 
             //replace text in the document
             doc.replace("#date", DATE.GetDate(), true, true);
@@ -304,7 +309,7 @@ public class Printer {
 
             bareCode.replaceTextWithImage(doc, QR_Code, "QR_Code");
 
-            System.out.println("ref"+ Arrays.toString(new Map[]{refList}));
+            System.out.println("ref" + Arrays.toString(new Map[]{refList}));
 
             doc.replace("#DIR", refList.get("lib"), true, true);
             doc.replace("#REF", String.valueOf(ref), true, true);
@@ -337,7 +342,7 @@ public class Printer {
         HISDAO hisdao = new HISDAO();
 
         // check file if exist or not
-        String filepath = printerRoot()+"RESULT\\BulletinPaie\\PB" + MAT + "_" + year + "_" + month;
+        String filepath = printerRoot() + "RESULT\\BulletinPaie\\PB" + MAT + "_" + year + "_" + month;
         File tmpDir = new File(filepath + ".pdf");
 
         if (!tmpDir.exists()) {
@@ -359,23 +364,23 @@ public class Printer {
 
             // fetch data form DB
 
-            String[][] data =sortingRub(rubdao.getRUB(MAT, month, year));
+            String[][] data = sortingRub(rubdao.getRUB(MAT, month, year));
             String[][] total = rubdao.CalBP(data);
-            Map<String, String> infoList = persdao.getPERS(MAT,year,month);
-            System.out.println("info \n"+infoList);
+            Map<String, String> infoList = persdao.getPERS(MAT, year, month);
+            System.out.println("info \n" + infoList);
             // checking if pers of this month exist
-            if (null == infoList.get("datenais")){
+            if (null == infoList.get("datenais")) {
 
-                String lastmonth,lastyear;
-                if (DATE.GetMonthNum().equals("01")){
+                String lastmonth, lastyear;
+                if (DATE.GetMonthNum().equals("01")) {
                     lastmonth = "12";
-                    lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));
+                    lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
                 } else {
-                    lastmonth = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
-                    lastyear =  DATE.GetYear();
+                    lastmonth = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+                    lastyear = DATE.GetYear();
                 }
 
-                infoList = persdao.getPERS(MAT,lastyear,lastmonth);
+                infoList = persdao.getPERS(MAT, lastyear, lastmonth);
                 System.out.println(infoList);
             }
 
@@ -386,7 +391,7 @@ public class Printer {
 
             //replace text in the document
 
-            doc.replace("#RETRO",((rubdao.isRetro(MAT,month,year)) ? "RETRO" : ""),true,true);
+            doc.replace("#RETRO", ((rubdao.isRetro(MAT, month, year)) ? "RETRO" : ""), true, true);
             doc.replace("#NOM", infoList.get("nom"), true, true);
             doc.replace("#DATNAIS", DATE.ChangeFormat(infoList.get("datenais")), true, true);
             doc.replace("#DATREC", DATE.ChangeFormat(infoList.get("daterec")), true, true);
@@ -412,17 +417,17 @@ public class Printer {
 
             doc.replace("#IRG", IRG, true, true);
             doc.replace("#SCJT", infoList.get("scjt"), true, true);
-            doc.replace("#ENFT","0"+String.valueOf((Integer.parseInt(infoList.get("nbrenfm10")) +
+            doc.replace("#ENFT", "0" + String.valueOf((Integer.parseInt(infoList.get("nbrenfm10")) +
                     Integer.parseInt(infoList.get("nbrenfs10")))), true, true);
             doc.replace("#ENFI", infoList.get("nbrenfm10"), true, true);
             doc.replace("#NO_RIB", infoList.get("rib"), true, true);
 
             String css = "";
-            if (infoList.get("css").equals("1")){
-                css = "\nCASORAL "+ infoList.get("nssagt");
-            }else if (infoList.get("css").equals("2")){
-                css = "\nCASORAN "+ infoList.get("nssagt");
-            }else css = "\nCASOREC "+ infoList.get("nssagt");
+            if (infoList.get("css").equals("1")) {
+                css = "\nCASORAL " + infoList.get("nssagt");
+            } else if (infoList.get("css").equals("2")) {
+                css = "\nCASORAN " + infoList.get("nssagt");
+            } else css = "\nCASOREC " + infoList.get("nssagt");
 
 //            doc.replace("#CAS",cas,true,true);
             String[] div = infoList.get("str").split("(?!^)");
@@ -435,7 +440,7 @@ public class Printer {
             doc.replace("#A", CPAIEM[2] + CPAIEM[3], true, true);
             doc.replace("#ANNE", year, true, true);
             doc.replace("#MOIE", DATE.formatMonth(Integer.parseInt(month)), true, true);
-            doc.replace("#GROUPE",infoList.get("groupe") , true, true);
+            doc.replace("#GROUPE", infoList.get("groupe"), true, true);
             doc.replace("#ECHELLE", infoList.get("echelle"), true, true);
             doc.replace("#SO", (infoList.get("suitorg") == null ? " " : infoList.get("suitorg"))
                     , true, true);
@@ -447,12 +452,12 @@ public class Printer {
             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
             symbols.setGroupingSeparator(' ');
             symbols.setDecimalSeparator('.');
-            DecimalFormat df = new DecimalFormat("#,##0.00",symbols);
+            DecimalFormat df = new DecimalFormat("#,##0.00", symbols);
             for (int r = 0; r < data.length; r++) {
                 if (!(data[r] == null)) {
                     for (int c = 0; c < data[r].length; c++) {
                         //fill data in cells
-                        if (c == 2 || c == 3 ||  c == 4 || c == 5 || c == 6 || c == 7) {
+                        if (c == 2 || c == 3 || c == 4 || c == 5 || c == 6 || c == 7) {
                             if (!data[r][c].isEmpty())
                                 table.getRows().get(r).getCells().get(c).getParagraphs().get(0).setText(df.format(Double.parseDouble(data[r][c])));
                             else
@@ -503,7 +508,7 @@ public class Printer {
         HISDAO hisdao = new HISDAO();
 
         // check file if exist or not
-        String filepath = printerRoot()+"RESULT\\ReleveEmoluments\\RE" + MAT + "_" + year;
+        String filepath = printerRoot() + "RESULT\\ReleveEmoluments\\RE" + MAT + "_" + year;
         File tmpDir = new File(filepath + ".pdf");
         if (!tmpDir.exists()) {
             System.out.println("file :" + filepath + " not found start making it");
@@ -521,15 +526,16 @@ public class Printer {
 
             // fetch data form DB
 
-            String month,lastyear;
-            if (DATE.GetMonthNum().equals("01")){
+            String month, lastyear;
+            if (DATE.GetMonthNum().equals("01")) {
                 month = "12";
-                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
+                ;
             } else {
-                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));
-                lastyear =  DATE.GetYear();
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+                lastyear = DATE.GetYear();
             }
-            Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
+            Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
             // fix her 01 bcz i dont have 03
             // todo change it
             double[] net = RE.getRE(MAT, lastyear,month);
@@ -545,8 +551,8 @@ public class Printer {
 
             REFDAO refdao = new REFDAO();
             Map<String, String> refList =
-                    refdao.getREF(infoList.get("str"),splitWillaya(infoList.get("loctrav")));
-            int ref = refdao.setREFdoc(refList.get("code"),"refRE");
+                    refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
+            int ref = refdao.setREFdoc(refList.get("code"), "refRE");
 
             //replace text in the document
             doc.replace("#MAT", MAT, true, true);
@@ -561,7 +567,7 @@ public class Printer {
             doc.replace("#TOTAL", df.format(net[0]), true, true);
 
 
-            doc.replace("#DIR",refList.get("directeur") , true, true);
+            doc.replace("#DIR", refList.get("directeur"), true, true);
             doc.replace("#REF", String.valueOf(ref), true, true);
             doc.replace("#CODE", refList.get("code"), true, true);
             doc.replace("#YEAR", DATE.GetYear(), true, true);
@@ -596,7 +602,7 @@ public class Printer {
         HISDAO hisdao = new HISDAO();
 
         // check file if exist or not
-        String filepath = printerRoot()+"RESULT\\ReleveEmoluments\\RED" + MAT + "_" + year;
+        String filepath = printerRoot() + "RESULT\\ReleveEmoluments\\RED" + MAT + "_" + year;
         File tmpDir = new File(filepath + ".pdf");
         if (!tmpDir.exists()) {
             System.out.println("file :" + filepath + " not found start making it");
@@ -615,17 +621,19 @@ public class Printer {
             doc.loadFromFile("C:\\template\\ReleveDesEmolumentsDetaille.docx");
 
             // fetch data form DB
-            String month,lastyear;
-            if (DATE.GetMonthNum().equals("01")){
+            String month, lastyear;
+            if (DATE.GetMonthNum().equals("01")) {
                 month = "12";
-                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
+                ;
             } else {
-                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));;
-                lastyear =  DATE.GetYear();
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+                ;
+                lastyear = DATE.GetYear();
             }
-            Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
+            Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
 
-            double[] net = RE.getRE(MAT, year,month);
+            double[] net = RE.getRE(MAT, year, month);
 
             // creation qr code.
             String QR_Code = "QR" + MAT + "_" + year + ".png";
@@ -637,8 +645,8 @@ public class Printer {
 
             REFDAO refdao = new REFDAO();
             Map<String, String> refList =
-                    refdao.getREF(infoList.get("str"),splitWillaya(infoList.get("loctrav")));
-            int ref = refdao.setREFdoc(refList.get("code"),"refRED");
+                    refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
+            int ref = refdao.setREFdoc(refList.get("code"), "refRED");
 
 
             //replace text in the document
@@ -697,12 +705,12 @@ public class Printer {
 
     }
 
-    public void PrintATC(String datepicker_start,String datepicker_end,String yearStart,int monthStart,int sl) {
+    public void PrintATC(String datepicker_start, String datepicker_end, String yearStart, int monthStart, int sl) {
         HISDAO hisdao = new HISDAO();
         String year = DATE.GetYear();
 
         // check file if exist or not
-        String filepath = printerRoot()+"RESULT\\ATC" + MAT + "_" + year + "_" + DATE.GetMonthNum();
+        String filepath = printerRoot() + "RESULT\\ATC" + MAT + "_" + year + "_" + DATE.GetMonthNum();
         File tmpDir = new File(filepath + ".pdf");
 
         if (!tmpDir.exists()) {
@@ -719,15 +727,17 @@ public class Printer {
             //load the template file
             doc.loadFromFile("C:\\template\\ATS.docx");
             // fetch data form DB
-            String month,lastyear;
-            if (DATE.GetMonthNum().equals("01")){
+            String month, lastyear;
+            if (DATE.GetMonthNum().equals("01")) {
                 month = "12";
-                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear())-1));;
+                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
+                ;
             } else {
-                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum())-1));;
-                lastyear =  DATE.GetYear();
+                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+                ;
+                lastyear = DATE.GetYear();
             }
-            Map<String, String> infoList = persdao.getPERS(MAT,lastyear,month);
+            Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
 
             System.out.println("infoList");
             System.out.println(Arrays.toString(new Map[]{infoList}));
@@ -737,34 +747,34 @@ public class Printer {
             // set ref
             REFDAO refdao = new REFDAO();
             Map<String, String> refList =
-                    refdao.getREF(infoList.get("str"),splitWillaya(infoList.get("loctrav")));
+                    refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
 
             doc.replace("#Agence", refList.get("commune"), true, true);
-            doc.replace("#CentrePaiment",refList.get("commune"), true, true);
+            doc.replace("#CentrePaiment", refList.get("commune"), true, true);
             doc.replace("#ADDEMPLOYEUR", refList.get("address"), true, true);
             //todo debug here
             System.out.println("DEBUG start ==============================");
-            System.out.println("NSSEMP : "+infoList.get("nssemp"));
+            System.out.println("NSSEMP : " + infoList.get("nssemp"));
             String[] nbrAdh = splitByNumber(infoList.get("nssemp"), 3);
-            String[] wl = splitByNumber(infoList.get("loctrav"),2);
-            System.out.println("nbradh 0 : "+ nbrAdh[0]);
-            System.out.println("nbradh 1 : "+ nbrAdh[1]);
+            String[] wl = splitByNumber(infoList.get("loctrav"), 2);
+            System.out.println("nbradh 0 : " + nbrAdh[0]);
+            System.out.println("nbradh 1 : " + nbrAdh[1]);
 
             assert wl != null;
-            doc.replace("#NbrAdh",  wl[0]+" " + nbrAdh[0] + " "
+            doc.replace("#NbrAdh", wl[0] + " " + nbrAdh[0] + " "
                     + nbrAdh[1] + " " + "56", true, true);
             String[] name = Printer.splitName(infoList.get("nom"));
             doc.replace("#NOM", name[0], true, true);
 
             if (datepicker_start.isEmpty())
-                doc.replace("#DJT","", true, true);
+                doc.replace("#DJT", "", true, true);
             else
-                doc.replace("#DJT",reverseArray(datepicker_start), true, true);
+                doc.replace("#DJT", reverseArray(datepicker_start), true, true);
 
             if (datepicker_end.isEmpty())
-                doc.replace("#DRT","", true, true);
+                doc.replace("#DRT", "", true, true);
             else
-                doc.replace("#DRT",reverseArray(datepicker_end), true, true);
+                doc.replace("#DRT", reverseArray(datepicker_end), true, true);
 
             doc.replace("#PRENOM", name[1], true, true);
             doc.replace("#DATNAIS", DATE.ChangeFormat(infoList.get("datenais")), true, true);
@@ -784,7 +794,7 @@ public class Printer {
             doc.replace("#WILLYA", splitWillaya(locdao.getLOC(infoList.get("codelieunais"))), true, true);
             // get the table
             RUBDAO rubdao = new RUBDAO();
-            String[][] data = rubdao.baseSS(MAT,yearStart,sl,monthStart);
+            String[][] data = rubdao.baseSS(MAT, yearStart, sl, monthStart);
             RUBDAO.reverseArray(data);
             Table table = doc.getSections().get(1).getTables().get(0);
             DecimalFormat df = new DecimalFormat("#,###.##");

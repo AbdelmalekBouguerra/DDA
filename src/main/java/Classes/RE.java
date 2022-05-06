@@ -49,7 +49,7 @@ public class RE {
     public static String calIRG(String file, double IRGB) {
         String[][] IRGCsv = readIrgCsv(file);
         // cast double to int to delete any decimal numbers
-        int num =  (((int) IRGB / 10) * 10);
+        int num = (((int) IRGB / 10) * 10);
 
         for (int i = 0; i < IRGCsv.length; i++) {
             if (IRGCsv[i] != null) {
@@ -58,7 +58,7 @@ public class RE {
                         return IRGCsv[i][1];
             }
         }
-        return null;
+        return "0.0";
     }
 
     // Obtenez d'abord toutes les données de l'année
@@ -69,7 +69,7 @@ public class RE {
 
         try {
             // Récupération des données
-            String date = month+"/"+year;
+            String date = month + "/" + year;
             String query = "SELECT * FROM rub_" + year + " WHERE matricule = ? AND mois = ? AND annee = ? ;";
             Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement pStatement = connection.prepareStatement(query);
@@ -80,12 +80,14 @@ public class RE {
             // reading from DB.
             int i = 0;
             while (resultSet.next()) {
-                String[] dataRow = new String[5];
+                String[] dataRow = new String[7];
                 dataRow[0] = resultSet.getString("NumRub");
                 dataRow[1] = String.valueOf(resultSet.getBigDecimal("MontantMois"));
                 dataRow[2] = String.valueOf(resultSet.getBigDecimal("Taux"));
                 dataRow[3] = String.valueOf(resultSet.getBigDecimal("Base"));
-                dataRow[4] = (String.valueOf(resultSet.getString("datedeb")).equals("null")) ? "notRapel" : "Rapel";
+                dataRow[4] = (String.valueOf(resultSet.getString("datedeb")).equals("null")) ? "notRappel" : "Rappel";
+                dataRow[5] = resultSet.getString("datedeb");
+                dataRow[6] = resultSet.getString("datefin");
                 data[i] = dataRow;
                 i++;
             }
@@ -101,8 +103,8 @@ public class RE {
         double[] data = new double[2];
         try {
             // connect to DB.
-            String date = month+"/"+year;
-            String query = "SELECT * FROM pers_"+year+" WHERE matricule = ? AND dateexpl = '"+date+"'";
+            String date = month + "/" + year;
+            String query = "SELECT * FROM pers_" + year + " WHERE matricule = ? AND dateexpl = '" + date + "'";
             Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement pStatement = connection.prepareStatement(query);
             pStatement.setString(1, Matricule);
@@ -120,36 +122,11 @@ public class RE {
         return data;
     }
 
-    // Calculer IRG
-    public static double getIRG(double IRGB) {
-        IRGB = IRGB / 10;
-        IRGB = Math.round(IRGB);
-        IRGB = IRGB * 10;
-
-        double  IRGV = 0;
-        if (IRGB >= 0 && IRGB <= 8000) {
-            System.out.println("error IRGB cant be under 8000");
-        } else if (IRGB >= 8000.00 && IRGB <= 15000.00) {
-            IRGV = 0;
-        } else if (IRGB >= 15010 && IRGB <= 22500) {
-            IRGV = ((IRGB - 15010) / 10) * 2;
-        } else if (IRGB >= 22510 && IRGB <= 28750) {
-            IRGV = ((IRGB - 22510) / 10) * 1.2 + 1501.20;
-        } else if (IRGB >= 28760 && IRGB <= 30000) {
-            IRGV = ((IRGB - 28760) / 10) * 2 + 2252;
-        } else if (IRGB >= 30010 && IRGB <= 119990) {
-            IRGV = ((IRGB - 30010) / 10) * 3 + 2503;
-        } else {
-            IRGV = ((IRGB - 120000) / 10) * 3.5 + 29496.5;
-        }
-        return IRGV;
-    }
-
     // Calculer RE à l'aide des dernières fonctions
-    public static double[] getRE(String MAT, String year,String month) throws IOException {
-        String[][] data = RE.getRUB(MAT,month, year);
-        if (data[0] == null){
-            throw new IOException("L'utilsateur "+MAT+" n'existe pas dans le RUB "+month+" "+ year);
+    public static double[] getRE(String MAT, String year, String month) throws IOException {
+        String[][] data = RE.getRUB(MAT, month, year);
+        if (data[0] == null) {
+            throw new IOException("L'utilsateur " + MAT + " n'existe pas dans le RUB " + month + " " + year);
         }
         System.out.println("Printing data =======================");
         for (String[] datum : data) {
@@ -174,7 +151,7 @@ public class RE {
                 IFA = 0,
                 IAG = 0,
                 IZCV = 0,
-                IZCV_Resident= 0,
+                IZCV_Resident = 0,
                 RAP_NOUR_IFA_TRANS_PAN = 0,
                 RAP_NUIS_ITP_SB_IAG = 0,
                 IZIN = 0,
@@ -190,13 +167,14 @@ public class RE {
                 GainsImpo,
                 GainsNonImpo = 0,
                 IRGB,
-                IRG,
+                IRG = 0,
                 IRGRapB,
                 TiersPayant = 0,
                 IRGRap,
                 RetPrimePanier = 0,
                 RetenuesImposable,
                 RetenuesNonImposable;
+        int nbrMois = 1;
 
         // get IAG and salaire de base
         double[] sb_iag = getSB_IAG(MAT, month, year);
@@ -284,19 +262,32 @@ public class RE {
                 4BE - RET. PRET ABC BANQUE AU PROFIT PERS T.R.C
                 408 - RET. ACHAT VEHICULE
              */
-            if (data[j][0].equals("448") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("446") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("486") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("430") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("412") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("4BR") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("4BE") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("408") && data[j][4].equals("notRapel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("300") && data[j][4].equals("notRapel")) {
+            if (data[j][0].equals("448") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("446") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("486") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("430") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("412") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("4BR") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("4BE") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("408") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("300") && data[j][4].equals("notRappel")) {
                 AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
                         + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
                 AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             }
+            // calculate number of months of IRG rappel. (464 & Rappel)
+            if (data[j][0].equals("464") && data[j][4].equals("Rappel")) {
+                /* first we get number of month data[j][5] & data[j][6]
+                    it contains data using format ddMMyyyy so for example
+                    data[j][5] = '01012022' and data[j][6] = 28022022,
+                    so we take MM using substring from second char to the forth
+                    '01' and '02' then we cast it to int to calculate
+                    02 - 01 + 1 = 2 (number of months)
+                 */
+                nbrMois = Integer.parseInt(data[j][6].substring(2, 4)) -
+                        Integer.parseInt(data[j][5].substring(2, 4)) + 1;
+            }
+
             j++;
 
         }
@@ -312,14 +303,15 @@ public class RE {
         IRGRapB = IndemniteInterim + IZIN + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN
                 + RAP_NOUR_IFA_TRANS_PAN;
 
-        IRGB = GainsImpo - IZCV - IRGRapB - RetenuesNonImposable;
+        IRGB = (GainsImpo - IZCV) - IRGRapB - RetenuesNonImposable;
         String file = "C:\\template\\IRG.csv";
 
-        IRG = Double.parseDouble(Objects.requireNonNull(calIRG(file, IRGB)));
-        int nbrMois = 1;
-        double temp = IRGRapB + (IRGB / nbrMois);
+        IRG = Double.parseDouble(calIRG(file, IRGB));
 
-
+        int temp = (int) ((IRGB / 10) + (IRGRapB / nbrMois / 10)) ;
+        temp = temp * 10;
+        System.out.println("temp " + temp);
+        System.out.println("nbr month " + nbrMois);
         IRGRap = (Double.parseDouble(Objects.requireNonNull(calIRG(file, temp))) - IRG) * nbrMois; // div par mois de rap
 
         RetenuesImposable = MIP + RetPret + IRG + IRGRap + TiersPayant;
@@ -366,7 +358,7 @@ public class RE {
         res[3] = ((IRG + IRGRap) * 12);
         res[4] = ((RetenuesNonImposable - PCR_MIP) * 12);
         res[5] = ((PCR_MIP + MIP) * 12);
-        res[6] = ((RetPrimePanier + TiersPayant) * 12) ;
+        res[6] = ((RetPrimePanier + TiersPayant) * 12);
         return res;
     }
 
