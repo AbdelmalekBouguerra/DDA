@@ -124,7 +124,7 @@ public class RE {
 
     // Calculer RE à l'aide des dernières fonctions
     public static double[] getRE(String MAT, String year, String month) throws IOException {
-        String[][] data = RE.getRUB(MAT, "03", year);
+        String[][] data = RE.getRUB(MAT, month, year);
         if (data[0] == null) {
             throw new IOException("L'utilsateur " + MAT + " n'existe pas dans le RUB " + month + " " + year);
         }
@@ -192,6 +192,11 @@ public class RE {
             if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("300") && data[j][4].equals("notRappel")) {
+                AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
+                        + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
+                AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
+            }
             if (data[j][0].equals("302")) Retraite = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("304")) RetraiteAnticipee = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("308")) RetAssuanceChomage = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
@@ -228,6 +233,7 @@ public class RE {
             if (data[j][0].equals("295")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("297")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("299")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+
             // ==========================================================================
             /*
             IZCV (NSR) Resident ================================================================
@@ -274,11 +280,7 @@ public class RE {
             if (data[j][0].equals("4BR") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BE") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("408") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("300") && data[j][4].equals("notRappel")) {
-                AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
-                        + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV + IAG;
-                AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            }
+
             // calculate number of months of IRG rappel. (464 & Rappel)
             if (data[j][0].equals("464") && data[j][4].equals("Rappel")) {
                 /* first we get number of month data[j][5] & data[j][6]
@@ -298,16 +300,18 @@ public class RE {
 
         GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
                 + PrimeTransport + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
-                + IZCV + IAG;
+                + IZCV_Resident + IAG;
 
-        GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV_Resident;
+        System.out.println("");
+
+        GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV;
 
         RetenuesNonImposable = AssuranceSociale + Retraite + RetAssuanceChomage + RetraiteAnticipee + PCR_MIP;
 
         IRGRapB = IndemniteInterim + IZIN + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN
                 + RAP_NOUR_IFA_TRANS_PAN;
 
-        IRGB = (GainsImpo - IZCV) - IRGRapB - RetenuesNonImposable;
+        IRGB = (GainsImpo - IZCV_Resident) - IRGRapB - RetenuesNonImposable;
         String file = "C:\\template\\IRG.csv";
 
         IRG = Double.parseDouble(calIRG(file, IRGB));
