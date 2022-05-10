@@ -124,7 +124,7 @@ public class RE {
 
     // Calculer RE à l'aide des dernières fonctions
     public static double[] getRE(String MAT, String year, String month) throws IOException {
-        String[][] data = RE.getRUB(MAT, month, year);
+        String[][] data = RE.getRUB(MAT, "03", year);
         if (data[0] == null) {
             throw new IOException("L'utilsateur " + MAT + " n'existe pas dans le RUB " + month + " " + year);
         }
@@ -198,6 +198,10 @@ public class RE {
             if (data[j][0].equals("406")) MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("460")) PCR_MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
+
+            // I Z I N ==================================================================
+            if (data[j][0].equals("159")) IZIN = (18.0 * Double.parseDouble(data[j][2]));
+
             /*
              IZCV =======================================================================
              IZCV (4x4) SR dans le fichier excel
