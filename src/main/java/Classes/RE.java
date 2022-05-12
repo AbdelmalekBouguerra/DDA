@@ -172,6 +172,7 @@ public class RE {
                 TiersPayant = 0,
                 IRGRap,
                 RetPrimePanier = 0,
+                PanierPret = 0,
                 RetenuesImposable,
                 RetenuesNonImposable;
         int nbrMois = 1;
@@ -276,6 +277,7 @@ public class RE {
             if (data[j][0].equals("446") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("486") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("430") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("419") && data[j][4].equals("Rappel")) PanierPret = (18 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("412") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BR") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BE") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
@@ -322,7 +324,7 @@ public class RE {
         System.out.println("nbr month " + nbrMois);
         IRGRap = (Double.parseDouble(Objects.requireNonNull(calIRG(file, temp))) - IRG) * nbrMois; // div par mois de rap
 
-        RetenuesImposable = MIP + RetPret + IRG + IRGRap + TiersPayant;
+        RetenuesImposable = MIP + RetPret + PanierPret + IRG + IRGRap + TiersPayant;
 
 
         double Net = (GainsImpo + GainsNonImpo) - (RetenuesImposable + RetenuesNonImposable);
@@ -338,6 +340,7 @@ public class RE {
         System.out.println("SalaireUnique : " + SalaireUnique);
         System.out.println("IZCV : " + IZCV);
         System.out.println("IZCV_Resident : " + IZCV_Resident);
+        System.out.println("IZIN : " + IZIN);
         System.out.println("IAG : " + IAG);
         System.out.println("Retraite : " + Retraite);
         System.out.println("RetAssuanceChomage  : " + RetAssuanceChomage);
@@ -354,6 +357,7 @@ public class RE {
         System.out.println("GainsNonImpo : " + GainsNonImpo);
         System.out.println("RetenuesImposable : " + RetenuesImposable);
         System.out.println("RetenuesNonImposable : " + RetenuesNonImposable);
+        System.out.println("PanierPret : " + PanierPret);
         System.out.println("RetPret : " + RetPret);
         System.out.println("Net : " + Net);
         System.out.println("NetPret : " + NetPret);
