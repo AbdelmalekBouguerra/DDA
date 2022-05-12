@@ -198,12 +198,15 @@ public class RE {
                         + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
                 AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             }
+
             if (data[j][0].equals("302")) Retraite = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("304")) RetraiteAnticipee = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("308")) RetAssuanceChomage = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("406")) MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("460")) PCR_MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("134") && data[j][4].equals("notRappel")) IFA = Double.parseDouble(data[j][1]);
+
 
             // I Z I N ==================================================================
             if (data[j][0].equals("159")) IZIN = (18.0 * Double.parseDouble(data[j][2]));
@@ -304,7 +307,9 @@ public class RE {
                 + PrimeTransport + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
                 + IZCV_Resident + IAG;
 
-        System.out.println("");
+        System.out.println(SalaireBase + " " +  IndemniteInterim +  " " + Revalorisation + " " + IFA + " " + ITP + " " + IndNuisance + " " + IZIN
+                + " " + PrimeTransport + " " + PrimePanier + " " + IndNourriture + " " + RAP_NOUR_IFA_TRANS_PAN + " " + RAP_NOUR_IFA_TRANS_PAN
+                + " " + IZCV_Resident + " " + IAG);
 
         GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV;
 
@@ -353,6 +358,7 @@ public class RE {
         System.out.println("temp : " + temp);
         System.out.println("IRGRap : " + IRGRap);
         System.out.println("TiersPayant : " + TiersPayant);
+        System.out.println("IFA : " + IFA);
         System.out.println("GainsImpo : " + GainsImpo);
         System.out.println("GainsNonImpo : " + GainsNonImpo);
         System.out.println("RetenuesImposable : " + RetenuesImposable);
