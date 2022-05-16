@@ -615,7 +615,7 @@ public class Printer {
             Document doc = new Document();
             //load the template file
             // todo: add dynamic file path
-            doc.loadFromFile(printerRoot() + "\\template\\ReleveDesEmolumentsDetaille.docx");
+            doc.loadFromFile(printerRoot() + "template\\ReleveDesEmolumentsDetaille.docx");
 
             // fetch data form DB
             String month, lastyear;
@@ -722,7 +722,7 @@ public class Printer {
             //create a document instance
             Document doc = new Document();
             //load the template file
-            doc.loadFromFile(printerRoot() + "\\template\\ATS.docx");
+            doc.loadFromFile(printerRoot() + "template\\ATS.docx");
             // fetch data form DB
             String month, lastyear;
             if (DATE.GetMonthNum().equals("01")) {
