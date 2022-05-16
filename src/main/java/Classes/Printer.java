@@ -788,7 +788,7 @@ public class Printer {
             String[] NSS = splitByNumber(infoList.get("nssagt"), 2);
             assert NSS != null;
             doc.replace("#NSS", NSS[0] + " " + NSS[1] + NSS[2] + " " + NSS[3] + NSS[4] + " " + NSS[5], true, true);
-            doc.replace("#WILLYA", splitWillaya(locdao.getLOC(infoList.get("codelieunais"))), true, true);
+            doc.replace("#WILLYA", splitWillaya(infoList.get("codelieunais")), true, true);
             // get the table
             RUBDAO rubdao = new RUBDAO();
             String[][] data = rubdao.baseSS(MAT, yearStart, sl, monthStart);
