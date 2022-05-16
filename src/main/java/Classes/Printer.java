@@ -434,8 +434,8 @@ public class Printer {
             String[] CPAIEM = infoList.get("cpaiem").split("(?!^)");
             doc.replace("#MP", CPAIEM[0], true, true);
             doc.replace("#B", CPAIEM[1], true, true);
-            doc.replace("#A", CPAIEM[2] + CPAIEM[3], true, true);
             doc.replace("#ANNE", year, true, true);
+            doc.replace("#A", CPAIEM[2] + CPAIEM[3], true, true);
             doc.replace("#MOIE", DATE.formatMonth(Integer.parseInt(month)), true, true);
             doc.replace("#GROUPE", infoList.get("groupe"), true, true);
             doc.replace("#ECHELLE", infoList.get("echelle"), true, true);
