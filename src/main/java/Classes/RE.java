@@ -26,7 +26,7 @@ public class RE {
     public static String[][] readIrgCsv(String file) {
         // loading the csv file
 
-        String line = "";
+        String line;
         String[][] value = new String[52900][];
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -51,7 +51,7 @@ public class RE {
         // cast double to int to delete any decimal numbers
         int num = (((int) IRGB / 10) * 10);
 
-        for (int i = 0; i < IRGCsv.length; i++) {
+          for (int i = 0; i < IRGCsv.length; i++) {
             if (IRGCsv[i] != null) {
                 for (int j = 0; j < IRGCsv[i].length; j++)
                     if (IRGCsv[i][0].equals(String.valueOf(num)))
@@ -122,6 +122,12 @@ public class RE {
         return data;
     }
 
+    // calculer la valeur des indemnités de tout le mois sans absance
+    public static double calInd(double Rub, double abs) {
+        if (abs == 0) return Rub;
+        return ((int) (Rub / (30 - abs))) * 30;
+    }
+
     // Calculer RE à l'aide des dernières fonctions
     public static double[] getRE(String MAT, String year, String month) throws IOException {
         String[][] data = RE.getRUB(MAT, month, year);
@@ -138,7 +144,6 @@ public class RE {
             }
 
         }
-
         double SalaireBase,
                 SalaireUnique = 0,
                 PrimePanier = 0,
@@ -191,46 +196,37 @@ public class RE {
 
         int j = 0;
         while (data[j] != null) {
-            // Prime de transport
-            if (data[j][0].equals("136")) PrimeTransportRub = (Double.parseDouble(data[j][1]));
-            // Salaire Unique
-            if (data[j][0].equals("200")) SalaireUnique = (Double.parseDouble(data[j][1]));
-            // INDEMNITÉ. NUISANCES
             if (data[j][0].equals("116")) IndNuisanceRub = (Double.parseDouble(data[j][1]));
-            // Heures_Supp_Forfait
+            if (data[j][0].equals("120")) IndemniteInterim = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("133")) Heures_Supp_ForfaitRub = (Double.parseDouble(data[j][1]));
-
-            // calculate prime panier and ind.Nourriture
-            if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
-
-            if (data[j][0].equals("300") && data[j][4].equals("notRappel")) {
-
-                // calculate indemnités fixes ===========================================================
-                IFA = calInd(IFARub, Abs);
-                ITP = calInd(ITPRub, Abs);
-                PrimeTransport = calInd(PrimeTransportRub, Abs);
-                IndNuisance = calInd(IndNuisanceRub, Abs);
-                Heures_Supp_Forfait = calInd(Heures_Supp_ForfaitRub, Abs);
-                // =========================================================================
-
-                AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
-                        + Heures_Supp_Forfait + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
-
-                AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            }
-
-            if (data[j][0].equals("302")) Retraite = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            if (data[j][0].equals("304")) RetraiteAnticipee = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            if (data[j][0].equals("308")) RetAssuanceChomage = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            if (data[j][0].equals("406")) MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            if (data[j][0].equals("460")) PCR_MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
-            if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("134") && data[j][4].equals("notRappel")) IFARub = Double.parseDouble(data[j][1]);
-
-            // ITP =================================================================================================
+            if (data[j][0].equals("136")) PrimeTransportRub = (Double.parseDouble(data[j][1]));
+            if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("158") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("159")) IZIN = (18.0 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("200")) SalaireUnique = (Double.parseDouble(data[j][1]));
+            if (data[j][0].equals("239")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("256")) INDEMN_FRAIS_VOYAGE = Double.parseDouble(data[j][1]);
+            // IZCV (4x4) SR ============================================================
+            if (data[j][0].equals("285")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
+            // ==========================================================================
+            if (data[j][0].equals("300") && data[j][4].equals("notRappel")) AssuranceSociale =
+                    Double.parseDouble(data[j][2]);
+            if (data[j][0].equals("302")) Retraite = Double.parseDouble(data[j][2]);
+            if (data[j][0].equals("304")) RetraiteAnticipee = Double.parseDouble(data[j][2]);
+            if (data[j][0].equals("308")) RetAssuanceChomage = Double.parseDouble(data[j][2]);
+            // Num of absence ==========================================================
+            if (data[j][0].equals("311")) Abs += Double.parseDouble(data[j][3]);
+            if (data[j][0].equals("331")) Abs += Double.parseDouble(data[j][3]);
+            // =========================================================================
+            if (data[j][0].equals("406")) MIP = Double.parseDouble(data[j][2]);
+            if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("460")) PCR_MIP = Double.parseDouble(data[j][2]);
+            if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("419") && data[j][4].equals("Rappel"))
+                PanierPret = (18 * Double.parseDouble(data[j][2]));
+            // ITP =================================================================================================
             if (data[j][0].equals("188") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("190") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("192") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
@@ -238,69 +234,7 @@ public class RE {
             if (data[j][0].equals("196") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("198") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("154") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
-            // Num of absence ==========================================================
-
-            if (data[j][0].equals("311")) Abs += Double.parseDouble(data[j][3]);
-            if (data[j][0].equals("331")) Abs += Double.parseDouble(data[j][3]);
-
-            // =========================================================================
-
-            // I Z I N ==================================================================
-            if (data[j][0].equals("159")) IZIN = (18.0 * Double.parseDouble(data[j][2]));
-
-            /*
-             IZCV =======================================================================
-             IZCV (4x4) SR dans le fichier excel
-             279    I Z C V  B
-             281    I Z C V  C
-             283    I Z C V  D
-             285    I Z C V  E
-             287	I Z C V  F
-             289	I Z C V  G
-             291	I Z C V  H
-             293	I Z C V  J
-             295	I Z C V  K
-             297	I Z C V  L
-             299	I Z C V  A
-             */
-            if (data[j][0].equals("279")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("281")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("283")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("285")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("287")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("289")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("291")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("293")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("295")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("297")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("299")) IZCV = (27.0 * Double.parseDouble(data[j][2]));
-
-            // ==========================================================================
-            /*
-            IZCV (NSR) Resident ================================================================
-            231 	I.Z.C.V. A  COTISABLE
-            233	    I.Z.C.V. B  COTISABLE
-            235	    I.Z.C.V. C  COTISABLE
-            237	    I.Z.C.V. D  COTISABLE
-            239	    I.Z.C.V. E  COTISABLE
-            241	    I.Z.C.V. F  COTISABLE
-            243	    I.Z.C.V. G  COTISABLE
-            245	    I.Z.C.V. H  COTISABLE
-             */
-            if (data[j][0].equals("231")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("233")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("235")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("237")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("239")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("241")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("243")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            if (data[j][0].equals("245")) IZCV_Resident = (30 * Double.parseDouble(data[j][2]));
-            // =================================================================================
-            if (data[j][0].equals("120")) IndemniteInterim = Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("256")) INDEMN_FRAIS_VOYAGE = Double.parseDouble(data[j][1]);
-
-
-            /*
+            /* =======================================================================================================
                 448 - RET. PRET ACHAT LOGEMENT
                 446 - RET. PRET CONSTRUCTION
                 450 - RET.ASS.VIE/PRET CONSTR.OSL
@@ -317,12 +251,11 @@ public class RE {
             if (data[j][0].equals("446") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("486") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("430") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("419") && data[j][4].equals("Rappel"))
-                PanierPret = (18 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("412") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BR") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BE") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("408") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
+            // =======================================================================================================
 
             // calculate number of months of IRG rappel. (464 & Rappel)
             if (data[j][0].equals("464") && data[j][4].equals("Rappel")) {
@@ -340,37 +273,49 @@ public class RE {
             j++;
 
         }
-
-
+        // calculate AssuranceSociale base ============================================================================
+        AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance + Heures_Supp_Forfait +
+                IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
+        // calculate AssuranceSociale base related values  ============================================================
+        AssuranceSociale = AssuranceSocialeB * AssuranceSociale / 100;
+        Retraite = AssuranceSocialeB * Retraite / 100;
+        RetraiteAnticipee = AssuranceSocialeB * RetraiteAnticipee / 100;
+        RetAssuanceChomage = AssuranceSocialeB * RetAssuanceChomage / 100;
+        MIP = AssuranceSocialeB * MIP / 100;
+        PCR_MIP = AssuranceSocialeB * PCR_MIP / 100;
+        // calculate indemnités fixes =================================================================================
+        IFA = calInd(IFARub, Abs);
+        ITP = calInd(ITPRub, Abs);
+        PrimeTransport = calInd(PrimeTransportRub, Abs);
+        IndNuisance = calInd(IndNuisanceRub, Abs);
+        Heures_Supp_Forfait = calInd(Heures_Supp_ForfaitRub, Abs);
+        // calculate GainsImpo ========================================================================================
         GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
-                + PrimeTransport + PrimePanier + IndNourriture + Heures_Supp_Forfait + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
-                + IZCV_Resident + IAG;
-
+                + PrimeTransport + PrimePanier + IndNourriture + Heures_Supp_Forfait + RAP_NOUR_IFA_TRANS_PAN +
+                RAP_NOUR_IFA_TRANS_PAN + IZCV_Resident + IAG;
+        // calculate GainsNonImpo =====================================================================================
         GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV;
-
+        // calculate Retenues Non Imposable ===========================================================================
         RetenuesNonImposable = AssuranceSociale + Retraite + RetAssuanceChomage + RetraiteAnticipee + PCR_MIP;
-
+        // calculate IRG Rappel Base ==================================================================================
         IRGRapB = IndemniteInterim + IZIN + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN
                 + RAP_NOUR_IFA_TRANS_PAN;
-
+        // calculate IRG Base =========================================================================================
         IRGB = (GainsImpo - IZCV_Resident) - IRGRapB - RetenuesNonImposable;
+        // get IRG ====================================================================================================
         String file = "C:\\template\\IRG.csv";
-
         IRG = Double.parseDouble(calIRG(file, IRGB));
-
+        // calculate IRG Rappel =======================================================================================
         int temp = (int) ((IRGB / 10) + (IRGRapB / nbrMois / 10));
         temp = temp * 10;
-        System.out.println("temp " + temp);
-        System.out.println("nbr month " + nbrMois);
-        IRGRap = (Double.parseDouble(Objects.requireNonNull(calIRG(file, temp))) - IRG) * nbrMois; // div par mois de rap
-
+        IRGRap = (Double.parseDouble(Objects.requireNonNull(calIRG(file, temp))) - IRG) * nbrMois;
+        // calculate Retenues Imposable ===============================================================================
         RetenuesImposable = MIP + RetPret + PanierPret + IRG + IRGRap + TiersPayant;
-
-
+        // calculate Net ==============================================================================================
         double Net = (GainsImpo + GainsNonImpo) - (RetenuesImposable + RetenuesNonImposable);
         double NetPret = Net + RetPret;
         double NetPayer = NetPret * 12;
-
+        // displaying values to the console ===========================================================================
         System.out.println("SalaireBase : " + SalaireBase);
         System.out.println("PrimePanier : " + PrimePanier);
         System.out.println("IndNourriture : " + IndNourriture);
@@ -405,7 +350,7 @@ public class RE {
         System.out.println("Net : " + Net);
         System.out.println("NetPret : " + NetPret);
         System.out.println("NetPayer : " + NetPayer);
-
+        // structuring Nets as array to print it in bulletin de paie file ==============================================
         double[] res = new double[8];
         res[0] = (NetPayer);
         res[1] = ((GainsImpo + GainsNonImpo) * 12);
@@ -415,12 +360,6 @@ public class RE {
         res[5] = ((PCR_MIP + MIP) * 12);
         res[6] = ((RetPrimePanier + TiersPayant) * 12);
         return res;
-    }
-
-    // calculer la valeur des indemnités de tout le mois sans absance
-    public static double calInd(double Rub, double abs) {
-        if (abs == 0) return Rub;
-        return ((int) (Rub / (30 - abs))) * 30;
     }
 
 }
