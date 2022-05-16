@@ -51,7 +51,7 @@ public class RE {
         // cast double to int to delete any decimal numbers
         int num = (((int) IRGB / 10) * 10);
 
-          for (int i = 0; i < IRGCsv.length; i++) {
+        for (int i = 0; i < IRGCsv.length; i++) {
             if (IRGCsv[i] != null) {
                 for (int j = 0; j < IRGCsv[i].length; j++)
                     if (IRGCsv[i][0].equals(String.valueOf(num)))
@@ -303,7 +303,7 @@ public class RE {
         // calculate IRG Base =========================================================================================
         IRGB = (GainsImpo - IZCV_Resident) - IRGRapB - RetenuesNonImposable;
         // get IRG ====================================================================================================
-        String file = "C:\\template\\IRG.csv";
+        String file = Printer.printerRoot() + "template\\IRG.csv";
         IRG = Double.parseDouble(calIRG(file, IRGB));
         // calculate IRG Rappel =======================================================================================
         int temp = (int) ((IRGB / 10) + (IRGRapB / nbrMois / 10));
