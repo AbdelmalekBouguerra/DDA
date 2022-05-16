@@ -142,19 +142,26 @@ public class RE {
         double SalaireBase,
                 SalaireUnique = 0,
                 PrimePanier = 0,
+                PrimeTransportRub = 0,
                 PrimeTransport = 0,
+                IndNuisanceRub = 0,
                 IndNuisance = 0,
                 IndNourriture = 0,
+                Heures_Supp_ForfaitRub = 0,
+                Heures_Supp_Forfait = 0,
                 INDEMN_FRAIS_VOYAGE = 0,
                 IndemniteInterim = 0,
                 Revalorisation = 0,
                 IFA = 0,
+                IFARub = 0,
+                Abs = 0,
                 IAG = 0,
                 IZCV = 0,
                 IZCV_Resident = 0,
                 RAP_NOUR_IFA_TRANS_PAN = 0,
                 RAP_NUIS_ITP_SB_IAG = 0,
                 IZIN = 0,
+                ITPRub = 0,
                 ITP = 0,
                 AssuranceSocialeB = 0,
                 AssuranceSociale = 0,
@@ -185,17 +192,32 @@ public class RE {
         int j = 0;
         while (data[j] != null) {
             // Prime de transport
-            if (data[j][0].equals("136")) PrimeTransport = (Double.parseDouble(data[j][1]));
+            if (data[j][0].equals("136")) PrimeTransportRub = (Double.parseDouble(data[j][1]));
             // Salaire Unique
             if (data[j][0].equals("200")) SalaireUnique = (Double.parseDouble(data[j][1]));
+            // INDEMNITÉ. NUISANCES
+            if (data[j][0].equals("116")) IndNuisanceRub = (Double.parseDouble(data[j][1]));
+            // Heures_Supp_Forfait
+            if (data[j][0].equals("133")) Heures_Supp_ForfaitRub = (Double.parseDouble(data[j][1]));
 
             // calculate prime panier and ind.Nourriture
             if (data[j][0].equals("143")) PrimePanier = (18.0 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("419")) RetPrimePanier = Double.parseDouble(data[j][1]);
             if (data[j][0].equals("147")) IndNourriture = (18.0 * Double.parseDouble(data[j][2]));
+
             if (data[j][0].equals("300") && data[j][4].equals("notRappel")) {
+
+                // calculate indemnités fixes ===========================================================
+                IFA = calInd(IFARub, Abs);
+                ITP = calInd(ITPRub, Abs);
+                PrimeTransport = calInd(PrimeTransportRub, Abs);
+                IndNuisance = calInd(IndNuisanceRub, Abs);
+                Heures_Supp_Forfait = calInd(Heures_Supp_ForfaitRub, Abs);
+                // =========================================================================
+
                 AssuranceSocialeB = SalaireBase + IndemniteInterim + Revalorisation + ITP + IndNuisance
-                        + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
+                        + Heures_Supp_Forfait + IZIN + RAP_NUIS_ITP_SB_IAG + IZCV_Resident + IAG;
+
                 AssuranceSociale = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             }
 
@@ -205,8 +227,23 @@ public class RE {
             if (data[j][0].equals("406")) MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("460")) PCR_MIP = AssuranceSocialeB * Double.parseDouble(data[j][2]) / 100;
             if (data[j][0].equals("4AT")) TiersPayant = Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("134") && data[j][4].equals("notRappel")) IFA = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("134") && data[j][4].equals("notRappel")) IFARub = Double.parseDouble(data[j][1]);
 
+            // ITP =================================================================================================
+            if (data[j][0].equals("158") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("188") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("190") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("192") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("194") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("196") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("198") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            if (data[j][0].equals("154") && data[j][4].equals("notRappel")) ITPRub = Double.parseDouble(data[j][1]);
+            // Num of absence ==========================================================
+
+            if (data[j][0].equals("311")) Abs += Double.parseDouble(data[j][3]);
+            if (data[j][0].equals("331")) Abs += Double.parseDouble(data[j][3]);
+
+            // =========================================================================
 
             // I Z I N ==================================================================
             if (data[j][0].equals("159")) IZIN = (18.0 * Double.parseDouble(data[j][2]));
@@ -280,7 +317,8 @@ public class RE {
             if (data[j][0].equals("446") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("486") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("430") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
-            if (data[j][0].equals("419") && data[j][4].equals("Rappel")) PanierPret = (18 * Double.parseDouble(data[j][2]));
+            if (data[j][0].equals("419") && data[j][4].equals("Rappel"))
+                PanierPret = (18 * Double.parseDouble(data[j][2]));
             if (data[j][0].equals("412") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BR") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
             if (data[j][0].equals("4BE") && data[j][4].equals("notRappel")) RetPret += Double.parseDouble(data[j][1]);
@@ -303,13 +341,10 @@ public class RE {
 
         }
 
-        GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
-                + PrimeTransport + PrimePanier + IndNourriture + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
-                + IZCV_Resident + IAG;
 
-        System.out.println(SalaireBase + " " +  IndemniteInterim +  " " + Revalorisation + " " + IFA + " " + ITP + " " + IndNuisance + " " + IZIN
-                + " " + PrimeTransport + " " + PrimePanier + " " + IndNourriture + " " + RAP_NOUR_IFA_TRANS_PAN + " " + RAP_NOUR_IFA_TRANS_PAN
-                + " " + IZCV_Resident + " " + IAG);
+        GainsImpo = SalaireBase + IndemniteInterim + Revalorisation + IFA + ITP + IndNuisance + IZIN
+                + PrimeTransport + PrimePanier + IndNourriture + Heures_Supp_Forfait + RAP_NOUR_IFA_TRANS_PAN + RAP_NOUR_IFA_TRANS_PAN
+                + IZCV_Resident + IAG;
 
         GainsNonImpo = SalaireUnique + INDEMN_FRAIS_VOYAGE + IZCV;
 
@@ -323,7 +358,7 @@ public class RE {
 
         IRG = Double.parseDouble(calIRG(file, IRGB));
 
-        int temp = (int) ((IRGB / 10) + (IRGRapB / nbrMois / 10)) ;
+        int temp = (int) ((IRGB / 10) + (IRGRapB / nbrMois / 10));
         temp = temp * 10;
         System.out.println("temp " + temp);
         System.out.println("nbr month " + nbrMois);
@@ -358,6 +393,8 @@ public class RE {
         System.out.println("temp : " + temp);
         System.out.println("IRGRap : " + IRGRap);
         System.out.println("TiersPayant : " + TiersPayant);
+        System.out.println("Nombre d'absence : " + Abs);
+        System.out.println("IFARub : " + IFARub);
         System.out.println("IFA : " + IFA);
         System.out.println("GainsImpo : " + GainsImpo);
         System.out.println("GainsNonImpo : " + GainsNonImpo);
@@ -378,6 +415,12 @@ public class RE {
         res[5] = ((PCR_MIP + MIP) * 12);
         res[6] = ((RetPrimePanier + TiersPayant) * 12);
         return res;
+    }
+
+    // calculer la valeur des indemnités de tout le mois sans absance
+    public static double calInd(double Rub, double abs) {
+        if (abs == 0) return Rub;
+        return ((int) (Rub / (30 - abs))) * 30;
     }
 
 }
