@@ -260,7 +260,6 @@ public class Printer {
             lastyear = DATE.GetYear();
         }
 
-
         // check file if exist or not
         String filepath = printerRoot() + "RESULT\\AttestationDeTravail\\ATS" + MAT + "_" + day + "_" + DATE.GetMonthNum() +
                 "_" + year;
@@ -280,14 +279,13 @@ public class Printer {
             //create a document instance
             Document doc = new Document();
             //load the template file
-            doc.loadFromFile("C:\\template\\AttestationDeTravail\\AttestationDeTravail.docx");
+            doc.loadFromFile(printerRoot() + "template\\AttestationDeTravail.docx");
             // fetch data form DB
             Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
             // creation qr code.
             String QR_Code = "QR" + MAT + "_" + year + "_" + DATE.GetMonthNum() + ".png";
             String text = MAT + " " + infoList.get("nom") + " " + infoList.get("fonction");
             bareCode.creatBareCode(text, QR_Code, 1, 1, false);
-
             // set ref
             REFDAO refdao = new REFDAO();
             Map<String, String> refList =
@@ -359,8 +357,7 @@ public class Printer {
             Document doc = new Document();
             doc.addSection();
             //load the template file
-            // todo: add dynamic file path
-            doc.loadFromFile("C:\\template\\FicheDePaie.docx");
+            doc.loadFromFile(printerRoot() + "template\\FicheDePaie.docx");
 
             // fetch data form DB
 
@@ -522,7 +519,7 @@ public class Printer {
             //create a document instance
             Document doc = new Document();
             //load the template file
-            doc.loadFromFile("C:\\template\\ReleveDesEmoluments.docx");
+            doc.loadFromFile(printerRoot() + "\\template\\ReleveDesEmoluments.docx");
 
             // fetch data form DB
 
@@ -618,7 +615,7 @@ public class Printer {
             Document doc = new Document();
             //load the template file
             // todo: add dynamic file path
-            doc.loadFromFile("C:\\template\\ReleveDesEmolumentsDetaille.docx");
+            doc.loadFromFile(printerRoot() + "\\template\\ReleveDesEmolumentsDetaille.docx");
 
             // fetch data form DB
             String month, lastyear;
@@ -725,7 +722,7 @@ public class Printer {
             //create a document instance
             Document doc = new Document();
             //load the template file
-            doc.loadFromFile("C:\\template\\ATS.docx");
+            doc.loadFromFile(printerRoot() + "\\template\\ATS.docx");
             // fetch data form DB
             String month, lastyear;
             if (DATE.GetMonthNum().equals("01")) {
