@@ -315,7 +315,7 @@ public class Printer {
             doc.replace("#REF", String.valueOf(ref), true, true);
             doc.replace("#CODE", refList.get("code"), true, true);
             doc.replace("#YEAR", DATE.GetYear(), true, true);
-            doc.replace("#DIRECTEUR", refList.get("directeur"), true, true);
+            doc.replace("#RESPONSABLE", refList.get("directeur"), true, true);
             doc.replace("#WIL", refList.get("commune"), true, true);
 
             //set title to pdf
