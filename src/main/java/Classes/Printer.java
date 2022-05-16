@@ -535,7 +535,7 @@ public class Printer {
             Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
             // fix her 01 bcz i dont have 03
             // todo change it
-            double[] net = RE.getRE(MAT, lastyear,month);
+            double[] net = RE.getRE(MAT, lastyear, month);
 
 
             // creation qr code.
@@ -711,115 +711,116 @@ public class Printer {
         File tmpDir = new File(filepath + ".pdf");
 
         if (!tmpDir.exists()) {
-            // track action
-            hisdao.saveAction(MAT, "Creation de Attestation de travail CNAS");
-            hisdao.saveAction(MAT, "Consultation de Attestation de travail CNAS");
-            System.out.println("file :" + filepath + " not found start making it");
+            // delete file if found and start new one;
+            tmpDir.delete();
+        }
+        // track action
+        hisdao.saveAction(MAT, "Creation de Attestation de travail CNAS");
+        hisdao.saveAction(MAT, "Consultation de Attestation de travail CNAS");
+        System.out.println("file :" + filepath + " not found start making it");
 
-            PERSDAO persdao = new PERSDAO();
-            LOCDAO locdao = new LOCDAO();
+        PERSDAO persdao = new PERSDAO();
+        LOCDAO locdao = new LOCDAO();
 
-            //create a document instance
-            Document doc = new Document();
-            //load the template file
-            doc.loadFromFile(printerRoot() + "template\\ATS.docx");
-            // fetch data form DB
-            String month, lastyear;
-            if (DATE.GetMonthNum().equals("01")) {
-                month = "12";
-                lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
-                ;
-            } else {
-                month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
-                ;
-                lastyear = DATE.GetYear();
-            }
-            Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
+        //create a document instance
+        Document doc = new Document();
+        //load the template file
+        doc.loadFromFile(printerRoot() + "template\\ATS.docx");
+        // fetch data form DB
+        String month, lastyear;
+        if (DATE.GetMonthNum().equals("01")) {
+            month = "12";
+            lastyear = String.format("%02d", (Integer.parseInt(DATE.GetYear()) - 1));
+            ;
+        } else {
+            month = String.format("%02d", (Integer.parseInt(DATE.GetMonthNum()) - 1));
+            ;
+            lastyear = DATE.GetYear();
+        }
+        Map<String, String> infoList = persdao.getPERS(MAT, lastyear, month);
 
-            System.out.println("infoList");
-            System.out.println(Arrays.toString(new Map[]{infoList}));
+        System.out.println("infoList");
+        System.out.println(Arrays.toString(new Map[]{infoList}));
 
-            //replace text in the document
+        //replace text in the document
 
-            // set ref
-            REFDAO refdao = new REFDAO();
-            Map<String, String> refList =
-                    refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
+        // set ref
+        REFDAO refdao = new REFDAO();
+        Map<String, String> refList =
+                refdao.getREF(infoList.get("str"), splitWillaya(infoList.get("loctrav")));
 
-            doc.replace("#Agence", refList.get("commune"), true, true);
-            doc.replace("#CentrePaiment", refList.get("commune"), true, true);
-            doc.replace("#ADDEMPLOYEUR", refList.get("address"), true, true);
-            //todo debug here
-            System.out.println("DEBUG start ==============================");
-            System.out.println("NSSEMP : " + infoList.get("nssemp"));
-            String[] nbrAdh = splitByNumber(infoList.get("nssemp"), 3);
-            String[] wl = splitByNumber(infoList.get("loctrav"), 2);
-            System.out.println("nbradh 0 : " + nbrAdh[0]);
-            System.out.println("nbradh 1 : " + nbrAdh[1]);
+        doc.replace("#Agence", refList.get("commune"), true, true);
+        doc.replace("#CentrePaiment", refList.get("commune"), true, true);
+        doc.replace("#ADDEMPLOYEUR", refList.get("address"), true, true);
+        //todo debug here
+        System.out.println("DEBUG start ==============================");
+        System.out.println("NSSEMP : " + infoList.get("nssemp"));
+        String[] nbrAdh = splitByNumber(infoList.get("nssemp"), 3);
+        String[] wl = splitByNumber(infoList.get("loctrav"), 2);
+        System.out.println("nbradh 0 : " + nbrAdh[0]);
+        System.out.println("nbradh 1 : " + nbrAdh[1]);
 
-            assert wl != null;
-            doc.replace("#NbrAdh", wl[0] + " " + nbrAdh[0] + " "
-                    + nbrAdh[1] + " " + "56", true, true);
-            String[] name = Printer.splitName(infoList.get("nom"));
-            doc.replace("#NOM", name[0], true, true);
+        assert wl != null;
+        doc.replace("#NbrAdh", wl[0] + " " + nbrAdh[0] + " "
+                + nbrAdh[1] + " " + "56", true, true);
+        String[] name = Printer.splitName(infoList.get("nom"));
+        doc.replace("#NOM", name[0], true, true);
 
-            if (datepicker_start.isEmpty())
-                doc.replace("#DJT", "", true, true);
-            else
-                doc.replace("#DJT", reverseArray(datepicker_start), true, true);
+        if (datepicker_start.isEmpty())
+            doc.replace("#DJT", "", true, true);
+        else
+            doc.replace("#DJT", reverseArray(datepicker_start), true, true);
 
-            if (datepicker_end.isEmpty())
-                doc.replace("#DRT", "", true, true);
-            else
-                doc.replace("#DRT", reverseArray(datepicker_end), true, true);
+        if (datepicker_end.isEmpty())
+            doc.replace("#DRT", "", true, true);
+        else
+            doc.replace("#DRT", reverseArray(datepicker_end), true, true);
 
-            doc.replace("#PRENOM", name[1], true, true);
-            doc.replace("#DATNAIS", DATE.ChangeFormat(infoList.get("datenais")), true, true);
-            doc.replace("#DATREC", DATE.ChangeFormat(infoList.get("daterec")), true, true);
-            doc.replace("#LIBFONC", infoList.get("fonction"), true, true);
-            doc.replace("#ADDEMP", infoList.get("adresse"), true, true);
-            doc.replace("#FONCTION", infoList.get("fonction"), true, true);
-            doc.replace("#DATEREC", DATE.ChangeFormat(infoList.get("daterec")), true, true);
+        doc.replace("#PRENOM", name[1], true, true);
+        doc.replace("#DATNAIS", DATE.ChangeFormat(infoList.get("datenais")), true, true);
+        doc.replace("#DATREC", DATE.ChangeFormat(infoList.get("daterec")), true, true);
+        doc.replace("#LIBFONC", infoList.get("fonction"), true, true);
+        doc.replace("#ADDEMP", infoList.get("adresse"), true, true);
+        doc.replace("#FONCTION", infoList.get("fonction"), true, true);
+        doc.replace("#DATEREC", DATE.ChangeFormat(infoList.get("daterec")), true, true);
 
 //           String[] der = der(infoList.get("str"), "refAT");
-            doc.replace("#DIR", refList.get("directeur"), true, true);
-            doc.replace("#DIRECTEUR", refList.get("directeur"), true, true);
-            doc.replace("#Date", DATE.GetDate(), true, true);
-            String[] NSS = splitByNumber(infoList.get("nssagt"), 2);
-            assert NSS != null;
-            doc.replace("#NSS", NSS[0] + " " + NSS[1] + NSS[2] + " " + NSS[3] + NSS[4] + " " + NSS[5], true, true);
-            doc.replace("#WILLYA", splitWillaya(infoList.get("codelieunais")), true, true);
-            // get the table
-            RUBDAO rubdao = new RUBDAO();
-            String[][] data = rubdao.baseSS(MAT, yearStart, sl, monthStart);
-            RUBDAO.reverseArray(data);
-            Table table = doc.getSections().get(1).getTables().get(0);
-            DecimalFormat df = new DecimalFormat("#,###.##");
-            for (int r = 0; r < data.length; r++) {
-                if (!(data[r] == null)) {
-                    for (int c = 0; c < data[r].length; c++) {
-                        //fill data in cells
-                        if (c == 3 || c == 4)
-                            table.getRows().get(r).getCells().get(c).getParagraphs().get(0).setText(df.format(Double.parseDouble(data[r][c])));
-                        else
-                            table.getRows().get(r).getCells().get(c).getParagraphs().get(0).setText(data[r][c]);
-                        table.getRows().get(r).getCells().get(c).getCellFormat().setVerticalAlignment(VerticalAlignment.Middle);
-                    }
+        doc.replace("#DIR", refList.get("directeur"), true, true);
+        doc.replace("#DIRECTEUR", refList.get("directeur"), true, true);
+        doc.replace("#Date", DATE.GetDate(), true, true);
+        String[] NSS = splitByNumber(infoList.get("nssagt"), 2);
+        assert NSS != null;
+        doc.replace("#NSS", NSS[0] + " " + NSS[1] + NSS[2] + " " + NSS[3] + NSS[4] + " " + NSS[5], true, true);
+        doc.replace("#WILLYA", splitWillaya(infoList.get("codelieunais")), true, true);
+        // get the table
+        RUBDAO rubdao = new RUBDAO();
+        String[][] data = rubdao.baseSS(MAT, yearStart, sl, monthStart);
+        RUBDAO.reverseArray(data);
+        Table table = doc.getSections().get(1).getTables().get(0);
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        for (int r = 0; r < data.length; r++) {
+            if (!(data[r] == null)) {
+                for (int c = 0; c < data[r].length; c++) {
+                    //fill data in cells
+                    if (c == 3 || c == 4)
+                        table.getRows().get(r).getCells().get(c).getParagraphs().get(0).setText(df.format(Double.parseDouble(data[r][c])));
+                    else
+                        table.getRows().get(r).getCells().get(c).getParagraphs().get(0).setText(data[r][c]);
+                    table.getRows().get(r).getCells().get(c).getCellFormat().setVerticalAlignment(VerticalAlignment.Middle);
                 }
-
             }
-            //save file to pdf and svg
-            doc.saveToFile(filepath + ".pdf", FileFormat.PDF);
-            System.out.println("setting meta data");
-            PdfDocument pdf = new PdfDocument();
-            System.out.println("setting meta data");
-            pdf.loadFromFile(filepath + ".pdf");
-            XmpMetadata meta = pdf.getXmpMetaData();
-            meta.setTitle("Attestation de travail CNAS");
-            pdf.saveToFile(filepath + ".pdf");
-            System.out.println("done setting meta data");
 
         }
+        //save file to pdf and svg
+        doc.saveToFile(filepath + ".pdf", FileFormat.PDF);
+        System.out.println("setting meta data");
+        PdfDocument pdf = new PdfDocument();
+        System.out.println("setting meta data");
+        pdf.loadFromFile(filepath + ".pdf");
+        XmpMetadata meta = pdf.getXmpMetaData();
+        meta.setTitle("Attestation de travail CNAS");
+        pdf.saveToFile(filepath + ".pdf");
+        System.out.println("done setting meta data");
 
     }
 
